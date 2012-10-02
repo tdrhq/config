@@ -54,22 +54,22 @@
  (c-set-style "linux"))
 
 (defun linux-c++-mode ()
- "C++ mode with big tabs.. " 
- (interactive) 
- (c++-mode) 
+ "C++ mode with big tabs.. "
+ (interactive)
+ (c++-mode)
  (c-set-style "linux") )
 
-(defun linux-php-mode () 
+(defun linux-php-mode ()
   "PHP mode with big tabs"
   (interactive)
   (php-mode)
   (c-set-style "linux"))
 
 (setq auto-mode-alist (cons '(".*\\.[ch]$" . linux-c-mode)
-	auto-mode-alist)) 
+	auto-mode-alist))
 
 (setq auto-mode-alist (cons '(".*\\.cpp$" . linux-c++-mode)
-	auto-mode-alist)) 
+	auto-mode-alist))
 
 (setq auto-mode-alist (cons '(".*\\.inc$" . linux-php-mode )
         auto-mode-alist))
@@ -85,8 +85,6 @@
 ;; for js
 (setq-default tab-width 4)
 
-
-(global-set-key "\C-x\C-m" 'execute-extended-command)
 
 ;;; rhtml mode
 (add-to-list 'load-path "~/.emacs.d/rhtml")
@@ -107,14 +105,14 @@
 
   (defun my-insert-file-name (filename &optional args)
     "Insert name of file FILENAME into buffer after point.
-  
+
   Prefixed with \\[universal-argument], expand the file name to
   its fully canocalized path.  See `expand-file-name'.
-  
+
   Prefixed with \\[negative-argument], use relative path to file
   name from current directory, `default-directory'.  See
   `file-relative-name'.
-  
+
   The default with no prefix is to insert the file name exactly as
   it appears in the minibuffer prompt."
     ;; Based on insert-file in Emacs -- ashawley 20080926
@@ -125,7 +123,7 @@
            (insert (expand-file-name filename)))
           (t
            (insert filename))))
-  
+
 
 (setq-default indent-tabs-mode nil)
 (setq make-backup-files nil)
@@ -141,16 +139,6 @@
 
 ;; give me some screen real estate.
 (menu-bar-mode -1)
-
-;; rename the current file and buffer
-(defun rename-bf (to)
-  (interactive "FNew filename: ")
-  "rename the file in the current buffer, and reopen it"
-  (let ((file (buffer-file-name)))
-    (if (file-exists-p file)
-	(rename-file file to))
-    (set-visited-file-name to)))
-
 
 (require 'lal-commit-editmsg)
 
@@ -171,11 +159,11 @@
 (global-set-key "\C-xk" 'kill-buffer)
 (global-set-key "\C-cc" 'compile)
 
-    ;; Draw tabs with the same color as trailing whitespace  
-    (add-hook 'font-lock-mode-hook  
-              (lambda ()  
-                (font-lock-add-keywords  
-                  nil  
+    ;; Draw tabs with the same color as trailing whitespace
+    (add-hook 'font-lock-mode-hook
+              (lambda ()
+                (font-lock-add-keywords
+                  nil
                   '(("\t" 0 'trailing-whitespace prepend)))))
 
 (setq compilation-scroll-output 'first-error)

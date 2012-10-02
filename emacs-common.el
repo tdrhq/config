@@ -28,3 +28,19 @@
 
 (ido-mode t)
 (setq ido-enable-flex-matching t)
+
+(global-set-key "\C-x\C-m" 'execute-extended-command)
+
+;; rename the current file and buffer
+(defun rename-bf (to)
+  (interactive "FNew filename: ")
+  "rename the file in the current buffer, and reopen it"
+  (let ((file (buffer-file-name)))
+    (if (file-exists-p file)
+	(rename-file file to))
+    (set-visited-file-name to)))
+
+
+
+
+

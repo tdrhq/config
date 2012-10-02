@@ -41,6 +41,17 @@
     (set-visited-file-name to)))
 
 
+(defun arnold-term-char-mode ()
+  (interactive)
+  (term-char-mode)
+  (end-of-buffer))
+
+(defun arnold-term-mode-hooks ()
+  (local-set-key "\C-c\C-k" 'arnold-term-char-mode))
+
+(add-hook 'term-mode-hook 'arnold-term-mode-hooks)
+
+
 
 
 

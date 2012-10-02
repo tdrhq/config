@@ -52,6 +52,26 @@
 (add-hook 'term-mode-hook 'arnold-term-mode-hooks)
 
 
+(defun arnold-set-buffer-compile-command (command)
+  (interactive "Fcommand ")
+  (set (make-local-variable 'compile-command)
+                       command))
+
+(defun arnold-set-compile-command  (on-hook root command)
+  (lexical-let ((root root) (command command))
+    (add-hook on-hook
+              (lambda ()
+                (interactive)
+                (if (string-prefix-p (expand-file-name root) (expand-file-name (buffer-file-name)))
+                    ;; ok, this is a match, set the compile command to the given command
+                    (arnold-set-buffer-compile-command command)
+                  )))))
+
+
+
+
+
+
 
 
 

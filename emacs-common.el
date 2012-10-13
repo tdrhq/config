@@ -24,7 +24,7 @@
 
 ;;; Code:
 
-
+(require 'cl)
 
 (ido-mode t)
 (setq ido-enable-flex-matching t)
@@ -66,6 +66,8 @@
                     ;; ok, this is a match, set the compile command to the given command
                     (arnold-set-buffer-compile-command command)
                   )))))
+
+(setenv "EDITOR" "emacsclient")
 
 
 

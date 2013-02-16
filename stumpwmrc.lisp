@@ -88,9 +88,12 @@
 ;;  xrandr --output VGA-0 --off &
 
 (setf *c-b-browser* (cons "conkeror" "Conkeror"))
-(setf *c-b-browser* (cons "firefox" "Firefox"))
-;; (setf *c-b-browser* (cons "google-chrome" "chrome"))
 
+(defcommand set-firefox-default () ()
+            (setf *c-b-browser* (cons "firefox" "Firefox")))
+(defcommand set-chrome-default () () 
+            (setf *c-b-browser* (cons "google-chrome" "chrome")))
+(set-chrome-default)
 
 (defcommand google-chrome () ()
 	    "Load google chrome"

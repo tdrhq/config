@@ -103,9 +103,12 @@
 	    "Load emacs"
 	    (run-or-raise "emacsclient -c" '(:title "Emacsclient")))
 
+(defcommand emacs-x11 () ()
+            "load emacs in x11"
+            (run-or-raise "emacsclient -c" '(:title "emacs@think")))
 
 (define-key *root-map* (kbd "C-b") "google-chrome")
-(define-key *root-map* (kbd "C-e") "emacs-urxvt")
+(define-key *root-map* (kbd "C-e") "emacs-x11")
 
 
 (defun run-and-get-output (cmd &optional (args ()) (env ()))

@@ -84,6 +84,16 @@
 
 
 
+(defun ssh-agent-start ()
+  (interactive)
+  (with-temp-buffer
+    (call-process "sh" nil t nil "-c" "eval `ssh-agent` > /dev/null; echo $SSH_AUTH_SOCK; echo $SSH_AGENT_PID")
+    ;; first line is the ssh-auth-sock
+    (beginning-of-buffer)
+    (setenv "SSH_AUTH_SOCK" (substring (thing-at-point 'line) 0 -1))
+    (next-line)
+    (setenv "SSH_AGENT_PID" (thing-at-point 'word))))
+
 
 
 

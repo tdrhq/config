@@ -1,3 +1,5 @@
+(load "~/config/emacs-common.el")
+
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.
@@ -88,7 +90,8 @@
 
 ;;; rhtml mode
 (add-to-list 'load-path "~/.emacs.d/rhtml")
-(require 'rhtml-mode)
+
+(require 'rhtml-mode nil t)
 
 (ido-mode t)
 
@@ -100,7 +103,7 @@
 (global-set-key "\C-x\C-k\r" nil)
 
 (add-to-list 'load-path "~/.emacs.d/scamacs/scala")
-(require 'scala-mode-auto)
+(require 'scala-mode-auto nil t)
 
 
   (defun my-insert-file-name (filename &optional args)
@@ -131,30 +134,26 @@
 (require 'yasnippet nil t)
 
 (add-to-list 'load-path "~/.emacs.d/lal")
-(require 'lal-add-import)
+;; (require 'lal-add-import nil t)
 
-(add-to-list 'lal-load-jars "/home/arnold/builds/LalAndroid/lib_managed/scala_2.8.1/compile/guice-2.0-no_aop.jar")
-(add-to-list 'lal-load-jars "/home/arnold/builds/LalAndroid/lib_managed/scala_2.8.1/compile/roboguice-1.1.jar")
-(add-to-list 'lal-load-jars "/home/arnold/builds/LalAndroid/target/scala_2.8.1/classes.min.jar")
+;;(add-to-list 'lal-load-jars "/home/arnold/builds/LalAndroid/lib_managed/scala_2.8.1/compile/guice-2.0-no_aop.jar")
+;; (add-to-list 'lal-load-jars "/home/arnold/builds/LalAndroid/lib_managed/scala_2.8.1/compile/roboguice-1.1.jar")
+;; (add-to-list 'lal-load-jars "/home/arnold/builds/LalAndroid/target/scala_2.8.1/classes.min.jar")
 
 ;; give me some screen real estate.
 (menu-bar-mode -1)
 
-(require 'lal-commit-editmsg)
+;; (require 'lal-commit-editmsg)
 
 (setq ruby-deep-indent-paren nil)
-(require 'git-emacs)
+(require 'git-emacs nil t)
 
 ;; use google-chrome as default browser
 (setq browse-url-generic-program "/usr/bin/google-chrome"
       browse-url-browser-function 'browse-url-generic)
 
-(require 'java-mode-indent-annotations)
-(add-hook 'java-mode-hook 'java-mode-indent-annotations-setup)
 
-(require 'thrift-mode)
 
-(require 'lal-caps)
 (global-set-key "\C-ck" 'upcase-last-word)
 (global-set-key "\C-xk" 'kill-buffer)
 (global-set-key "\C-cc" 'compile)
@@ -174,17 +173,6 @@
 (setq outline-regexp "[*\f]+")
 
 (require 'cl)
-(add-to-list 'load-path "~/.emacs.d/site-lisp/cedet-1.1/eieio")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/cedet-1.1/semantic")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/cedet-1.1/common")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/cedet-1.1/contrib")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/cedet-1.1/ede")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/cedet-1.1/speedbar")
-(add-to-list 'load-path "~/.emacs.d/site-lisp/cedet-1.1/srecode")
-
-(load-file "~/.emacs.d/site-lisp/cedet-1.1/eieio/eieio.el")
-(load-file "~/.emacs.d/site-lisp/cedet-1.1/common/cedet.el")
-(semantic-load-enable-excessive-code-helpers)
 
 
 

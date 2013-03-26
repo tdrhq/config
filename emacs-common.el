@@ -32,10 +32,10 @@
 (global-set-key "\C-x\C-m" 'execute-extended-command)
 
 ;; do the same for C++ mode
-(add-hook 'c++-mode-hook
-          (lambda ()
-            (interactive)
-            (local-set-key "\C-c\C-c" 'compile)))
+;; (add-hook 'c++-mode-hook
+;;           (lambda ()
+;;             (interactive)
+;;             (local-set-key "\C-c\C-c" 'my-compile-c)))
 
 (global-set-key "\C-x\C-c"
                 (lambda ()

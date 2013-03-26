@@ -30,7 +30,6 @@
 (setq ido-enable-flex-matching t)
 
 (global-set-key "\C-x\C-m" 'execute-extended-command)
-(global-set-key "\C-c\C-c" 'compile)
 
 ;; do the same for C++ mode
 (add-hook 'c++-mode-hook

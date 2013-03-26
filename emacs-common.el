@@ -94,7 +94,18 @@
     (next-line)
     (setenv "SSH_AGENT_PID" (thing-at-point 'word))))
 
+(defun compile-end-of-buffer ()
+  (message "entering compile-end-of-buffer"
+  (run-at-time "1 secs" nil
+               (lambda ()
+                 (message "running hook")
+                 (with-selected-window (get-buffer-window "*compilation*")
+                   (end-of-buffer)))))
 
+(defun compilec (cmd)
+  (interactive "sFoo: ")
+  (compile cmd)
+  (compile-end-of-buffer))
 
 
 

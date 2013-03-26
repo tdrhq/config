@@ -96,7 +96,7 @@
 
 (defun compile-end-of-buffer ()
   (message "entering compile-end-of-buffer"
-  (run-at-time "1 secs" nil
+  (run-at-time "3 secs" nil
                (lambda ()
                  (message "running hook")
                  (with-selected-window (get-buffer-window "*compilation*")

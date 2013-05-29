@@ -143,14 +143,14 @@
          
 ;; (toggle-mode-line (current-screen) (current-head))
 
-(load "/usr/share/common-lisp/source/slime/swank-loader.lisp")
-(swank-loader:init)
-(defcommand swank () ()
-  (setf stumpwm:*top-level-error-action* :break)
-  (swank:create-server :port 4005
-                       :style swank:*communication-style*
-                       :dont-close t)
-  (echo-string (current-screen) "Starting swank."))
+;; (load "/usr/share/common-lisp/source/slime/swank-loader.lisp")
+;; (swank-loader:init)
+;; (defcommand swank () ()
+;;   (setf stumpwm:*top-level-error-action* :break)
+;;   (swank:create-server :port 4005
+;;                        :style swank:*communication-style*
+;;                        :dont-close t)
+;;   (echo-string (current-screen) "Starting swank."))
 (define-key *root-map* (kbd "C-s") "swank")     
 
             

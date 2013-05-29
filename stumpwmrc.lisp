@@ -105,7 +105,7 @@
 
 (defcommand emacs-x11 () ()
             "load emacs in x11"
-            (run-or-raise "emacsclient -c" '(:title "emacs@think")))
+            (run-or-raise "emacsclient -c" '(:class "Emacs")))
 
 (define-key *root-map* (kbd "C-b") "google-chrome")
 (define-key *root-map* (kbd "C-e") "emacs-x11")

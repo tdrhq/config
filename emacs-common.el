@@ -99,7 +99,7 @@
                (lambda ()
                  (message "running hook")
                  (with-selected-window (get-buffer-window "*compilation*")
-                   (end-of-buffer)))))
+                   (end-of-buffer))))))
 
 (defun compilec (cmd)
   (interactive "sFoo: ")

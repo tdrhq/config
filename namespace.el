@@ -14,20 +14,48 @@
            x))
          (t x)))
 
-(defmacro in-namespace (namespace &rest body)
+(defmacro with-namespace-internal (namespace &rest body)
   (let* ((form2 (cons 'progn body)))
     (mapcar (lambda (y) (namespace-rename namespace y)) form2)))
 
 
 (macroexpand-1 (defun ff (x) (+ 1 x)))
 
-(macroexpand (in-namespace
+(macroexpand (with-namespace-internal
  "foo"
  (defun ::xyz (x)
    (+ 1 x))
  (mapcar '::xyz '(1 2 3))))
 
-(macroexpand (in-namespace "foo" ::xyz))
+
+
+
+;; more better syntax: we use a global *current-namespace* to indicate
+;; the current namespace so that we can bind C-xC-e to
+;; eval-with-namespace for faster iteration
+
+(setf *current-namespace* "internal")
+
+;; Note that this is a macro that is setting the namespace because it
+;; needs to be set at compile time
+(defmacro namespace-set (namespace)
+  (namespace-set-internal (symbol-name namespace)))
+
+(namespace-set foo-bar)
+
+(defmacro in-namespace (&rest body)
+  `(with-namespace-internal ,*current-namespace* ,@body))
+
+(in-namespace 
+ (setf ::bye 2)
+ (setf ::cy 3))
+
+
+  
+
+
+
+
 
 
 

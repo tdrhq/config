@@ -46,9 +46,9 @@
 (defmacro in-namespace (&rest body)
   `(with-namespace-internal ,*current-namespace* ,@body))
 
-(in-namespace 
+(macroexpand '(in-namespace 
  (setf ::bye 2)
- (setf ::cy 3))
+ (setf ::cy 3)))
 
 
   

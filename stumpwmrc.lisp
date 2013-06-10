@@ -105,7 +105,7 @@
 
 (defcommand emacs-x11 () ()
             "load emacs in x11"
-            (run-or-raise "emacsclient -c" '(:title "emacs@think")))
+            (run-or-raise "emacsclient -c" '(:class "Emacs")))
 
 (define-key *root-map* (kbd "C-b") "google-chrome")
 (define-key *root-map* (kbd "C-e") "emacs-x11")
@@ -143,14 +143,14 @@
          
 ;; (toggle-mode-line (current-screen) (current-head))
 
-(load "/usr/share/common-lisp/source/slime/swank-loader.lisp")
-(swank-loader:init)
-(defcommand swank () ()
-  (setf stumpwm:*top-level-error-action* :break)
-  (swank:create-server :port 4005
-                       :style swank:*communication-style*
-                       :dont-close t)
-  (echo-string (current-screen) "Starting swank."))
+;; (load "/usr/share/common-lisp/source/slime/swank-loader.lisp")
+;; (swank-loader:init)
+;; (defcommand swank () ()
+;;   (setf stumpwm:*top-level-error-action* :break)
+;;   (swank:create-server :port 4005
+;;                        :style swank:*communication-style*
+;;                        :dont-close t)
+;;   (echo-string (current-screen) "Starting swank."))
 (define-key *root-map* (kbd "C-s") "swank")     
 
             

@@ -30,13 +30,12 @@
 (setq ido-enable-flex-matching t)
 
 (global-set-key "\C-x\C-m" 'execute-extended-command)
-(global-set-key "\C-c\C-c" 'compile)
 
 ;; do the same for C++ mode
-(add-hook 'c++-mode-hook
-          (lambda ()
-            (interactive)
-            (local-set-key "\C-c\C-c" 'compile)))
+;; (add-hook 'c++-mode-hook
+;;           (lambda ()
+;;             (interactive)
+;;             (local-set-key "\C-c\C-c" 'my-compile-c)))
 
 (global-set-key "\C-x\C-c"
                 (lambda ()
@@ -44,13 +43,13 @@
                   (message "Sorry, I can't quit that way")))
 
 ;; rename the current file and buffer
-(defun rename-bf (to)
-  (interactive "FNew filename: ")
-  "rename the file in the current buffer, and reopen it"
-  (let ((file (buffer-file-name)))
-    (if (file-exists-p file)
-	(rename-file file to))
-    (set-visited-file-name to)))
+;; (defun rename-bf (to)
+;;   (interactive "FNew filename: ")
+;;   "rename the file in the current buffer, and reopen it"
+;;   (let ((file (buffer-file-name)))
+;;     (if (file-exists-p file)
+;; 	(rename-file file to))
+;;     (set-visited-file-name to)))
 
 
 (defun arnold-term-char-mode ()
@@ -94,7 +93,18 @@
     (next-line)
     (setenv "SSH_AGENT_PID" (thing-at-point 'word))))
 
+(defun compile-end-of-buffer ()
+  (message "entering compile-end-of-buffer"
+  (run-at-time "3 secs" nil
+               (lambda ()
+                 (message "running hook")
+                 (with-selected-window (get-buffer-window "*compilation*")
+                   (end-of-buffer))))))
 
+(defun compilec (cmd)
+  (interactive "sFoo: ")
+  (compile cmd)
+  (compile-end-of-buffer))
 
 
 

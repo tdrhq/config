@@ -26,6 +26,8 @@
 
 (require 'cl)
 
+(add-to-list 'load-path "~/config")
+
 (ido-mode t)
 (setq ido-enable-flex-matching t)
 
@@ -106,6 +108,15 @@
   (compile cmd)
   (compile-end-of-buffer))
 
+(defun arg-list-intro-setup ()
+  (c-set-offset 'arglist-intro '+))
+
+(add-hook 'java-mode-hook 'arg-list-intro-setup)
+
+(global-set-key "\C-cc" 'compile)
 
 
+(require 'java-mode-indent-annotations)
+(add-hook 'java-mode-hook 'java-mode-indent-annotations-setup)
 
+(setq make-backup-files nil)

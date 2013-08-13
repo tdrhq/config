@@ -139,7 +139,6 @@
 
 (setf *mouse-focus-policy* :click)
 
-(in-package :stumpwm)
          
 ;; (toggle-mode-line (current-screen) (current-head))
 
@@ -153,4 +152,4 @@
 ;;   (echo-string (current-screen) "Starting swank."))
 (define-key *root-map* (kbd "C-s") "swank")     
 
-            
+(setf (symbol-function 'screen-windows) #'stumpwm::screen-windows)

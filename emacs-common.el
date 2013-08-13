@@ -45,13 +45,13 @@
                   (message "Sorry, I can't quit that way")))
 
 ;; rename the current file and buffer
-;; (defun rename-bf (to)
-;;   (interactive "FNew filename: ")
-;;   "rename the file in the current buffer, and reopen it"
-;;   (let ((file (buffer-file-name)))
-;;     (if (file-exists-p file)
-;; 	(rename-file file to))
-;;     (set-visited-file-name to)))
+(defun rename-bf (to)
+  (interactive "FNew filename: ")
+  "rename the file in the current buffer, and reopen it"
+  (let ((file (buffer-file-name)))
+    (if (file-exists-p file)
+	(rename-file file to))
+    (set-visited-file-name to)))
 
 
 (defun arnold-term-char-mode ()

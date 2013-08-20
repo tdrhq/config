@@ -133,3 +133,10 @@
       (while (re-search-forward "^\\(.*\n\\)\\1+" end t)
         (replace-match "\\1"))))
   
+(recentf-mode 1)
+(setq recentf-max-saved-items 300)
+
+;; backup files suck
+(setq make-backup-files nil)
+
+

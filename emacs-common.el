@@ -115,11 +115,6 @@
 
 (global-set-key "\C-cc" 'compile)
 
-(defun change-working-dir (from to)
-  "Change all files that are opened in from to to"
-  
-
-
 (require 'java-mode-indent-annotations)
 (add-hook 'java-mode-hook 'java-mode-indent-annotations-setup)
 
@@ -140,3 +135,5 @@
 (setq make-backup-files nil)
 
 
+(tool-bar-mode -1)
+(menu-bar-mode -1)

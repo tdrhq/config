@@ -137,3 +137,44 @@
 
 (tool-bar-mode -1)
 (menu-bar-mode -1)
+
+
+(defun all-caps-last-word ()
+  (interactive)
+  (let ((word (thing-at-point 'word)))
+    (let ((cap (upcase word)))
+      (message "in here with %s" cap)
+      (backward-kill-word 1)
+      (insert cap)))
+  )
+
+(ert-deftest all-caps-last-word ()
+  (with-temp-buffer
+    (insert "foo bar")
+    (save-excursion 
+      (insert " too"))
+    (all-caps-last-word)
+    (should (equal "foo BAR too" (buffer-string)))))
+    
+
+(add-hook 'java-mode
+          (lambda ()
+            (local-set-key (kbd "\C-ck") 'all-caps-last-word)))
+
+
+(defun gnome-notify (message)
+  (shell-command (format "notify-send '%s'" message)))
+
+(defun compile-finished-notification (buf status)
+  (message "Status is %s" status)
+  (gnome-notify 
+         (if (string-match "finished" status)
+             "Compilation done"
+           "Compilation failed")))
+
+(add-hook 'compilation-finish-functions
+          'compile-finished-notification)
+
+;; remove trailing whitespace always
+(add-hook 'before-save-hook
+          'delete-trailing-whitespace)

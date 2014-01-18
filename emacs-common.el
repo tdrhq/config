@@ -127,7 +127,7 @@
       (goto-char beg)
       (while (re-search-forward "^\\(.*\n\\)\\1+" end t)
         (replace-match "\\1"))))
-  
+
 (recentf-mode 1)
 (setq recentf-max-saved-items 300)
 
@@ -151,11 +151,11 @@
 (ert-deftest all-caps-last-word ()
   (with-temp-buffer
     (insert "foo bar")
-    (save-excursion 
+    (save-excursion
       (insert " too"))
     (all-caps-last-word)
     (should (equal "foo BAR too" (buffer-string)))))
-    
+
 
 (add-hook 'java-mode
           (lambda ()
@@ -167,7 +167,7 @@
 
 (defun compile-finished-notification (buf status)
   (message "Status is %s" status)
-  (gnome-notify 
+  (gnome-notify
          (if (string-match "finished" status)
              "Compilation done"
            "Compilation failed")))
@@ -178,3 +178,9 @@
 ;; remove trailing whitespace always
 (add-hook 'before-save-hook
           'delete-trailing-whitespace)
+
+(require 'uniquify)
+
+(setq
+  uniquify-buffer-name-style 'post-forward
+  uniquify-separator "-")

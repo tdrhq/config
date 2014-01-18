@@ -104,12 +104,7 @@
 	    "Load emacs"
 	    (run-or-raise "emacsclient -c" '(:title "Emacsclient")))
 
-(defcommand emacs-x11 () ()
-            "load emacs in x11"
-            (run-or-raise "emacsclient -c" '(:class "Emacs")))
-
 (define-key *root-map* (kbd "C-b") "google-chrome")
-(define-key *root-map* (kbd "C-e") "emacs-x11")
 
 
 (defun run-and-get-output (cmd &optional (args ()) (env ()))
@@ -191,12 +186,15 @@
 
 (define-window-slot "IS-EDITOR")
 
-(defcommand set-is-editor () ()
+(defcommand toggle-is-editor () ()
   "Set the current window as an editor window"
-  (setf (window-is-editor (current-window)) t))
+  (setf (window-is-editor (current-window)) (not (window-is-editor (current-window)))))
 
-(defcommand move-to-next-editor () ()
-  (let* ((matches (remove-if-not (lambda (x) (window-is-editor x)) (screen-windows (current-screen))))
+(defun editors ()
+  (remove-if-not (lambda (x) (window-is-editor x)) (screen-windows (current-screen))))
+
+(defun move-to-next-editor ()
+  (let* ((matches (editors))
          (other-matches (member (current-window) matches))
 
          (win (or
@@ -205,5 +203,12 @@
          (if win
              (pull-window win))))
 
+(defcommand move-to-editor () ()
+  "Move to the next editor. You can mark an editor using
+  set-is-editor. If no editors are found it tries to look up the first
+  emacs window"
+  (if (editors)
+      (move-to-next-editor)
+    (run-or-raise "emacsclient -c" '(:class "Emacs"))))
 
-(member 4 (list 3 1 2))
+(define-key *root-map* (kbd "C-e") "move-to-editor")

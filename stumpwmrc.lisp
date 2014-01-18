@@ -153,11 +153,12 @@
 
 ;; Start a swank server
 
-
-(load "/home/arnold/builds/slime/swank-loader.lisp")
-
-
-(swank-loader:init)
+(let ((swank-loader "/home/arnold/builds/slime/swank-loader.lisp"))
+  (if (proble-file swank-loader)
+      (load swank-loader)
+    ;; Make sure emacs loads slime from quicklisp, eh?
+    (ql:quickload "swank"))
+  (swank-loader:init))
 
 (defcommand swank () ()
   (swank:create-server :port 5005

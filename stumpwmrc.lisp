@@ -1,4 +1,5 @@
 
+(in-package :stumpwm)
 (set-prefix-key (kbd "C-u"))
 
 
@@ -15,7 +16,7 @@
 			 (run-shell-command ,kill-command)
 		       (run-shell-command ,command))
 		     (setf ,state-var (not ,state-var))))
-      
+
 (defmacro deftoggle (function-sym command kill-command)
   `(let (toggle-state)
     (defun ,function-sym ()
@@ -36,7 +37,7 @@
 ;;    (run-shell-command "trayer --SetDockType false"))
 ;;  (setf *trayer-state* (not *trayer-state*)))
 
-(define-key *root-map* (kbd "C-t") "eval (toggle-trayer)")       
+(define-key *root-map* (kbd "C-t") "eval (toggle-trayer)")
 
 ;; redefine from windows to window list
 (define-key *root-map* (kbd "w") "windowlist")
@@ -91,7 +92,7 @@
 
 (defcommand set-firefox-default () ()
             (setf *c-b-browser* (cons "firefox" "Firefox")))
-(defcommand set-chrome-default () () 
+(defcommand set-chrome-default () ()
             (setf *c-b-browser* (cons "google-chrome" "chrome")))
 (set-chrome-default)
 
@@ -132,14 +133,14 @@
                         (run-and-get-output "/home/arnold/.local/bin/setup-thinkpad-keyboard.sh"))
 (sb-posix:putenv  (concat "PATH=" (getenv "HOME") "/.local/bin:" (getenv "PATH")))
 
-(defcommand dock () () 
+(defcommand dock () ()
             "first thing to do when you dock"
             (run-and-get-output "/home/arnold/.local/bin/setup-thinkpad-keyboard.sh")
             (run-and-get-output "/usr/bin/xrandr --output VGA1 --right-of LVDS1 --preferred"))
 
 (setf *mouse-focus-policy* :click)
 
-         
+
 ;; (toggle-mode-line (current-screen) (current-head))
 
 ;; (load "/usr/share/common-lisp/source/slime/swank-loader.lisp")
@@ -150,6 +151,33 @@
 ;;                        :style swank:*communication-style*
 ;;                        :dont-close t)
 ;;   (echo-string (current-screen) "Starting swank."))
-(define-key *root-map* (kbd "C-s") "swank")     
+(define-key *root-map* (kbd "C-s") "swank")
 
 (setf (symbol-function 'screen-windows) #'stumpwm::screen-windows)
+
+
+;; Start a swank server
+
+
+(load "/home/arnold/builds/slime/swank-loader.lisp")
+
+
+(swank-loader:init)
+
+(defcommand swank () ()
+  (swank:create-server :port 5005
+                       :style swank:*communication-style*
+                       :dont-close t)
+  (echo-string (current-screen)
+               "Starting swank. M-x slime-connect RET RET, then (in-package stumpwm)."))
+
+
+(defun my-terminals ()
+  (remove-if-not (lambda (x) (equal (stumpwm::window-class x) "URxvt")) (stumpwm::screen-windows (stumpwm:current-screen))))
+(window-user-title (second (my-terminals)))
+
+
+(defcommand move-next-urxvt () ()
+  (run-or-raise "urxvt" '(:class "URxvt")))
+
+(define-key *root-map* (kbd "C-c") "move-next-urxvt")

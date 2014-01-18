@@ -181,3 +181,29 @@
   (run-or-raise "urxvt" '(:class "URxvt")))
 
 (define-key *root-map* (kbd "C-c") "move-next-urxvt")
+
+
+;;;; Define a custom editor
+;; While most of the time I'm editing in Emacs, every now and then I'm
+;; editing in a console, probably ssh-ing somewhere and using an emacs
+;; over a console. These commands help me control which window is the
+;; editor that is bound to C-uC-e
+
+(define-window-slot "IS-EDITOR")
+
+(defcommand set-is-editor () ()
+  "Set the current window as an editor window"
+  (setf (window-is-editor (current-window)) t))
+
+(defcommand move-to-next-editor () ()
+  (let* ((matches (remove-if-not (lambda (x) (window-is-editor x)) (screen-windows (current-screen))))
+         (other-matches (member (current-window) matches))
+
+         (win (or
+               (second other-matches)
+               (first matches))))
+         (if win
+             (pull-window win))))
+
+
+(member 4 (list 3 1 2))

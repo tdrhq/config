@@ -136,41 +136,10 @@
 (setf *mouse-focus-policy* :click)
 
 
-;; (toggle-mode-line (current-screen) (current-head))
-
-;; (load "/usr/share/common-lisp/source/slime/swank-loader.lisp")
-;; (swank-loader:init)
-;; (defcommand swank () ()
-;;   (setf stumpwm:*top-level-error-action* :break)
-;;   (swank:create-server :port 4005
-;;                        :style swank:*communication-style*
-;;                        :dont-close t)
-;;   (echo-string (current-screen) "Starting swank."))
-(define-key *root-map* (kbd "C-s") "swank")
-
-(setf (symbol-function 'screen-windows) #'stumpwm::screen-windows)
-
-
-;; Start a swank server
-
-(let ((swank-loader "/home/arnold/builds/slime/swank-loader.lisp"))
-  (if (probe-file swank-loader)
-      (load swank-loader)
-    ;; Make sure emacs loads slime from quicklisp, eh?
-    (ql:quickload "swank"))
-  (swank-loader:init))
-
-(defcommand swank () ()
-  (swank:create-server :port 5005
-                       :style swank:*communication-style*
-                       :dont-close t)
-  (echo-string (current-screen)
-               "Starting swank. M-x slime-connect RET RET, then (in-package stumpwm)."))
 
 
 (defun my-terminals ()
   (remove-if-not (lambda (x) (equal (stumpwm::window-class x) "URxvt")) (stumpwm::screen-windows (stumpwm:current-screen))))
-(window-user-title (second (my-terminals)))
 
 
 (defcommand move-next-urxvt () ()
@@ -213,3 +182,22 @@
     (run-or-raise "emacsclient -c" '(:class "Emacs"))))
 
 (define-key *root-map* (kbd "C-e") "move-to-editor")
+
+
+;; Start a swank server. Since this is brittle (because of the
+;; existence of external slime repo), keep this at the absolute bottom
+
+(load "/home/arnold/builds/slime/swank-loader.lisp")
+(swank-loader:init :reload t)
+
+(defun load-swank ()
+  (swank:create-server :port 5005
+                       :style swank:*communication-style*
+                       :dont-close t)
+  (echo-string (current-screen)
+               "Starting swank. M-x slime-connect RET RET, then (in-package stumpwm)."))
+
+(defcommand swank () ()
+ (load-swank))
+
+(define-key *root-map* (kbd "C-s") "swank")

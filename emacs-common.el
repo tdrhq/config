@@ -184,3 +184,10 @@
 (setq
   uniquify-buffer-name-style 'post-forward
   uniquify-separator "-")
+
+
+;; prettyfy json
+(defun json-format ()
+  (interactive)
+  (save-excursion
+    (shell-command-on-region (mark) (point) "python -m json.tool" (buffer-name) t)))

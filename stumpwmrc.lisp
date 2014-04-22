@@ -23,7 +23,7 @@
        (toggle-command toggle-state ,command ,kill-command))))
 
 
-(deftoggle toggle-trayer "trayer --SetDockType false" "killall trayer")
+(deftoggle toggle-trayer "/usr/bin/trayer --SetDockType false" "killall trayer")q
 (deftoggle toggle-xclock "xclock" "killall xclock")
 
 ;; (defvar *trayer-state* nil)
@@ -37,12 +37,13 @@
 ;;    (run-shell-command "trayer --SetDockType false"))
 ;;  (setf *trayer-state* (not *trayer-state*)))
 
-(define-key *root-map* (kbd "C-t") "eval (toggle-trayer)")
+(define-key *root-map* (kbd "C-t") "eval (stumpwm::toggle-trayer)")
 
 ;; redefine from windows to window list
 (define-key *root-map* (kbd "w") "windowlist")
 (define-key *root-map* (kbd "C-w") "windowlist")
 (define-key *root-map* (kbd "c") "exec urxvt")
+
 
 
 ;; (let ((count 0)
@@ -121,7 +122,7 @@
 
 (defcommand echo-date () ()
   "Display the date and time."
-  (apply #'message "~a~%~a~%~a~%~a" (run-and-get-output "/usr/bin/acpi") (mapcar #'time-for-zone (list "America/Los_Angeles" "America/New_York" "Asia/Calcutta" ))))
+  (apply #'message "~a:~%CA :~a~%NYC:~a~%IST:~a" (run-and-get-output "/usr/bin/acpi") (mapcar #'time-for-zone (list "America/Los_Angeles" "America/New_York" "Asia/Calcutta" ))))
 
 (defcommand setup-thinkpad-kbd () ()
             " setup the think pad keyboard"
@@ -201,3 +202,13 @@
  (load-swank))
 
 (define-key *root-map* (kbd "C-s") "swank")
+
+
+(defcommand cleanup-windows () ()
+
+  ;; clean up "bad" windows... at the time of writing just "unnamed
+  ;; device" windows
+
+  (loop for window in (screen-windows (current-screen))
+        do (when (equal (window-class window) "Nautilus")
+                  (delete-window window))))

@@ -23,7 +23,7 @@
        (toggle-command toggle-state ,command ,kill-command))))
 
 
-(deftoggle toggle-trayer "/usr/bin/trayer --SetDockType false" "killall trayer")q
+(deftoggle toggle-trayer "/usr/bin/trayer --SetDockType false" "killall trayer")
 (deftoggle toggle-xclock "xclock" "killall xclock")
 
 ;; (defvar *trayer-state* nil)

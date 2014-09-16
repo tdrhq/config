@@ -191,3 +191,12 @@
   (interactive)
   (save-excursion
     (shell-command-on-region (mark) (point) "python -m json.tool" (buffer-name) t)))
+
+(require 'stripes)
+
+(global-unset-key (kbd "\C-xm"))
+
+(defun camelCasify-word (word)
+  (if (< (length word) 1)
+      word
+    (concat (downcase (substring word 0 1)) (substring word 1))))

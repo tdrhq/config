@@ -23,7 +23,7 @@
        (toggle-command toggle-state ,command ,kill-command))))
 
 
-(deftoggle toggle-trayer "/usr/bin/trayer --SetDockType false" "killall trayer")q
+(deftoggle toggle-trayer "/usr/bin/trayer --SetDockType false" "killall trayer")
 (deftoggle toggle-xclock "xclock" "killall xclock")
 
 ;; (defvar *trayer-state* nil)
@@ -106,6 +106,12 @@
 	    (run-or-raise "emacsclient -c" '(:title "Emacsclient")))
 
 (define-key *root-map* (kbd "C-b") "google-chrome")
+
+(defcommand xchat () ()
+  "jump to xchat"
+  (run-or-raise "xchat" (list :class "Xchat")))
+
+(define-key *root-map* (kbd "C-x") "xchat")
 
 
 (defun run-and-get-output (cmd &optional (args ()) (env ()))

@@ -141,12 +141,14 @@
 
 (defun all-caps-last-word ()
   (interactive)
-  (let ((word (thing-at-point 'word)))
+  (let ((word (thing-at-point 'symbol)))
     (let ((cap (upcase word)))
       (message "in here with %s" cap)
-      (backward-kill-word 1)
-      (insert cap)))
-  )
+      (backward-delete-char (length word))
+      (insert cap))))
+
+
+(global-set-key "\C-ck" 'all-caps-last-word)
 
 (ert-deftest all-caps-last-word ()
   (with-temp-buffer
@@ -200,3 +202,37 @@
   (if (< (length word) 1)
       word
     (concat (downcase (substring word 0 1)) (substring word 1))))
+
+
+;; setup ERC (IRC for emacs)
+(require 'tls)
+
+(autoload 'erc-nick-notify-mode "erc-nick-notify"
+  "Minor mode that calls `erc-nick-notify-cmd' when his nick gets
+mentioned in an erc channel" t)
+(eval-after-load 'erc '(erc-nick-notify-mode t))
+
+(defun recent-files-in-ansi-term ()
+  (interactive)
+  (unwind-protect
+      (remove-if-not
+       'arnold/valid-file-p
+       (save-excursion
+         (term-line-mode)
+         (cl-loop for i from 1 to 50
+                  collect
+                  (progn
+                   (forward-line -1)
+                   (end-of-line)
+                   (thing-at-point 'filename)))))
+    (term-char-mode)))
+
+(defun arnold/valid-file-p (file)
+  (if (and file (not (string= file "")))
+      (file-exists-p file)))
+
+
+(defun open-recent-file-from-ansi-term ()
+  (interactive)
+  (let ((files (recent-files-in-ansi-term)))
+    (find-file (ido-completing-read "Select file: " files))))

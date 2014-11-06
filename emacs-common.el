@@ -236,3 +236,13 @@ mentioned in an erc channel" t)
   (interactive)
   (let ((files (recent-files-in-ansi-term)))
     (find-file (ido-completing-read "Select file: " files))))
+
+(desktop-save-mode 1)
+
+;; java @override indentation
+(add-hook 'java-mode-hook
+          '(lambda () "Treat Java 1.5 @-style annotations as comments."
+             (setq c-comment-start-regexp
+                   "\\(@\\|/\\(/\\|[*][*]?\\)\\)")
+             (modify-syntax-entry ?@ "< b"
+                                  java-mode-syntax-table)))

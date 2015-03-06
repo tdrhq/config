@@ -246,3 +246,5 @@ mentioned in an erc channel" t)
                    "\\(@\\|/\\(/\\|[*][*]?\\)\\)")
              (modify-syntax-entry ?@ "< b"
                                   java-mode-syntax-table)))
+
+(add-hook 'before-save-hook 'delete-trailing-whitespace)

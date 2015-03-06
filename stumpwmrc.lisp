@@ -76,7 +76,7 @@
 
 
 ;; get a warning red box around an unfocused window
-(setf *window-border-style* :thick)
+(setf *window-border-style* :none)
 (set-unfocus-color "red")
 (set-focus-color "grey")
 

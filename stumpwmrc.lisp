@@ -95,6 +95,9 @@
             (setf *c-b-browser* (cons "firefox" "Firefox")))
 (defcommand set-chrome-default () ()
             (setf *c-b-browser* (cons "google-chrome" "chrome")))
+(defcommand set-iceweasel-default () ()
+            (setf *c-b-browser* (cons "firefox" "Iceweasel")))
+
 (set-chrome-default)
 
 (defcommand google-chrome () ()

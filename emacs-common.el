@@ -257,3 +257,5 @@ mentioned in an erc channel" t)
         (when (and (buffer-file-name) (file-exists-p (buffer-file-name)) (not (buffer-modified-p)))
           (revert-buffer t t t) )))
     (message "Refreshed open files.") )
+
+ (add-to-list 'auto-mode-alist '("BUCK$" . python-mode))

@@ -221,3 +221,5 @@
   (loop for window in (screen-windows (current-screen))
         do (when (equal (window-class window) "Nautilus")
                   (delete-window window))))
+
+(define-key *root-map* (kbd "L") "exec gnome-screensaver-command -l")

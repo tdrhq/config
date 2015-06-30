@@ -258,4 +258,17 @@ mentioned in an erc channel" t)
           (revert-buffer t t t) )))
     (message "Refreshed open files.") )
 
- (add-to-list 'auto-mode-alist '("BUCK$" . python-mode))
+(add-to-list 'auto-mode-alist '("BUCK$" . python-mode))
+
+(defun arnold/chomp (str)
+  "Chomp leading and tailing whitespace from STR."
+  (while (string-match "\\`\n+\\|^\\s-+\\|\\s-+$\\|\n+\\'"
+                       str)
+    (setq str (replace-match "" t t str)))
+  str)
+
+(defun set-emulator-serial ()
+  (interactive)
+  (let ((key "ANDROID_SERIAL"))
+    (setenv key)
+    (setenv "ANDROID_SERIAL" (arnold/chomp (shell-command-to-string "adb -e get-serialno")))))

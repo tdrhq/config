@@ -49,6 +49,8 @@
   (interactive "FNew filename: ")
   "rename the file in the current buffer, and reopen it"
   (let ((file (buffer-file-name)))
+    (if (file-directory-p to)
+        (setq to (concat to "/" (file-name-nondirectory file))))
     (if (file-exists-p file)
 	(rename-file file to))
     (set-visited-file-name to)))
@@ -272,3 +274,26 @@ mentioned in an erc channel" t)
   (let ((key "ANDROID_SERIAL"))
     (setenv key)
     (setenv "ANDROID_SERIAL" (arnold/chomp (shell-command-to-string "adb -e get-serialno")))))
+
+(defun ansi-term-parse-directory ()
+  (save-excursion
+    (end-of-buffer)
+    (if (re-search-backward "arnold@.*:\\(.*\\)$ " nil t)
+        (match-string 1)
+      "~")))
+
+(defun ansi-term-with-line-mode (method)
+  (let ((was-char-mode (term-in-char-mode)))
+    (unwind-protect
+      (progn
+       (term-line-mode)
+       (funcall method))
+      (if was-char-mode
+          (term-char-mode)))))
+
+
+(defun ansi-term-get-directory ()
+  (interactive)
+  (ansi-term-with-line-mode
+   (lambda ()
+     (ansi-term-parse-directory))))

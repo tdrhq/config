@@ -58,6 +58,7 @@
 
 (setf *window-format* "%m%n%s%2gg0c: %20t")
 
+(message "loading shit")
 
 
 ;; startup apps
@@ -83,6 +84,8 @@
 
 ;; C-z C-z shouldn't pull to current frame. No command should pull. That sucks.
 (define-key *root-map* (kbd "C-z") "other-window")
+
+(message "define first key and stuff")
 
 ;; xrandr commands, FYI
 ;; xrandr -q | grep "VGA1 connected" &&  xrandr --output VGA1 --left-of LVDS --preferred &
@@ -117,6 +120,11 @@
 (define-key *root-map* (kbd "C-x") "xchat")
 
 
+
+(defcommand screensaver () ()
+  (message "running screensaver")
+  (run-shell-command "xscreensaver-command -l || gnome-screensaver-command -l"))
+
 (defun run-and-get-output (cmd &optional (args ()) (env ()))
   (let ((p (sb-ext:process-output (sb-ext:run-program cmd () :output :stream :wait t :search t :environment env))))
     (read-line p nil 'foo)))
@@ -138,6 +146,8 @@
                         (run-and-get-output "/home/arnold/.local/bin/setup-thinkpad-keyboard.sh"))
 (sb-posix:putenv  (concat "PATH=" (getenv "HOME") "/.local/bin:" (getenv "PATH")))
 
+(message "just before dock")
+
 (defcommand dock () ()
             "first thing to do when you dock"
             (run-and-get-output "/home/arnold/.local/bin/setup-thinkpad-keyboard.sh")
@@ -147,6 +157,7 @@
 
 
 
+(message "just before myterminal")
 
 (defun my-terminals ()
   (remove-if-not (lambda (x) (equal (stumpwm::window-class x) "URxvt")) (stumpwm::screen-windows (stumpwm:current-screen))))
@@ -170,6 +181,7 @@
   "Set the current window as an editor window"
   (setf (window-is-editor (current-window)) (not (window-is-editor (current-window)))))
 
+(message "just before editors")
 (defun editors ()
   (remove-if-not (lambda (x) (window-is-editor x)) (screen-windows (current-screen))))
 
@@ -183,6 +195,8 @@
          (if win
              (pull-window win))))
 
+(message "just before move-to-editor")
+
 (defcommand move-to-editor () ()
   "Move to the next editor. You can mark an editor using
   set-is-editor. If no editors are found it tries to look up the first
@@ -191,28 +205,26 @@
       (move-to-next-editor)
     (run-or-raise "emacsclient -c" '(:class "Emacs"))))
 
+(message "just before first define-key")
+
 (define-key *root-map* (kbd "C-e") "move-to-editor")
+
+(message "after first define-key")
 
 
 ;; Start a swank server. Since this is brittle (because of the
 ;; existence of external slime repo), keep this at the absolute bottom
 
-(load "/home/arnold/builds/slime/swank-loader.lisp")
-(swank-loader:init :reload t)
 
-(defun load-swank ()
-  (swank:create-server :port 5005
-                       :style swank:*communication-style*
-                       :dont-close t)
-  (echo-string (current-screen)
-               "Starting swank. M-x slime-connect RET RET, then (in-package stumpwm)."))
 
-(defcommand swank () ()
- (load-swank))
+(message "just before loading-swank")
+
+
 
 (define-key *root-map* (kbd "C-s") "swank")
 
 
+(message "before cleanup windows")
 (defcommand cleanup-windows () ()
 
   ;; clean up "bad" windows... at the time of writing just "unnamed
@@ -220,6 +232,27 @@
 
   (loop for window in (screen-windows (current-screen))
         do (when (equal (window-class window) "Nautilus")
-                  (delete-window window))))
+             (delete-window window))))
 
-(define-key *root-map* (kbd "L") "exec gnome-screensaver-command -l")
+
+(define-key *root-map* (kbd "L") "screensaver")
+
+(message "the end")
+
+
+(setf *swank-loader* "/home/arnold/builds/slime/swank-loader.lisp")
+(when (probe-file *swank-loader*)
+  (load *swank-loader*)
+
+  (swank-loader:init :reload t))
+
+(message "after swank-loader")
+ (defun load-swank ()
+  (swank:create-server :port 5005
+                       :style swank:*communication-style*
+                       :dont-close t)
+  (echo-string (current-screen)
+               "Starting swank. M-x slime-connect RET RET, then (in-package stumpwm)."))
+
+(defcommand swank () ()
+  (load-swank))

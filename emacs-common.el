@@ -111,7 +111,8 @@
   (compile-end-of-buffer))
 
 (defun arg-list-intro-setup ()
-  (c-set-offset 'arglist-intro '+))
+  ;;(c-set-offset 'arglist-intro '+)
+  )
 
 (add-hook 'java-mode-hook 'arg-list-intro-setup)
 
@@ -205,6 +206,28 @@
       word
     (concat (downcase (substring word 0 1)) (substring word 1))))
 
+(defun arnold/is-upcase (chr)
+  (equal chr (upcase chr)))
+
+(defun toggle-camel-str (input)
+  (let ((chr-0 (aref input 0))
+        (chr-1 (aref input 1)))
+    (if (and (equal chr-0 ?m)  (arnold/is-upcase chr-1))
+        (camelCasify-word (substring input 1))
+      (concat "m" (char-to-string (upcase (aref input 0))) (substring input 1)))))
+
+
+(defun toggle-camel ()
+  (interactive)
+  (let ((word (thing-at-point 'word))
+        (beg (beginning-of-thing 'word))
+        (end (end-of-thing 'word)))
+    (goto-char beg)
+    (delete-char (- end beg))
+    (insert (toggle-camel-str word))))
+
+
+
 
 ;; setup ERC (IRC for emacs)
 (require 'tls)
@@ -297,3 +320,8 @@ mentioned in an erc channel" t)
   (ansi-term-with-line-mode
    (lambda ()
      (ansi-term-parse-directory))))
+
+(defun arnold/open-in-browser (url)
+  (interactive)
+
+  (start-process "firefox" nil "firefox" url))

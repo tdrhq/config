@@ -209,12 +209,18 @@
 (defun arnold/is-upcase (chr)
   (equal chr (upcase chr)))
 
-(defun toggle-camel-str (input)
+(defun arnold/is-m-name (input)
   (let ((chr-0 (aref input 0))
-        (chr-1 (aref input 1)))
-    (if (and (equal chr-0 ?m)  (arnold/is-upcase chr-1))
+              (chr-1 (aref input 1)))
+    (and (equal chr-0 ?m)  (arnold/is-upcase chr-1))))
+
+(defun arnold/upcase-first (input)
+  (concat (char-to-string (upcase (aref input 0))) (substring input 1)))
+
+(defun toggle-camel-str (input)
+    (if (arnold/is-m-name input)
         (camelCasify-word (substring input 1))
-      (concat "m" (char-to-string (upcase (aref input 0))) (substring input 1)))))
+      (concat "m" (arnold/upcase-first input))))
 
 (defun arnold/find-constructor ()
   (goto-char (point-min))
@@ -225,13 +231,16 @@
 (defun arnold/indent-line ()
   (indent-region (beginning-of-thing 'line) (end-of-thing 'line)))
 
-(defun arnold/def-private (class field)
-  (save-excursion
-    (arnold/find-constructor)
-    (forward-line -1)
-    (insert (format "private %s %s;" class field))
-    (arnold/indent-line)
-    (insert "\n")))
+(defun arnold/def-private (&optional class field)
+  (interactive)
+  (let* ((class (or class (arnold/read-classname)))
+         (field (or field (toggle-camel-str class))))
+    (save-excursion
+      (arnold/find-constructor)
+      (forward-line -1)
+      (insert (format "private %s %s;" class field))
+      (arnold/indent-line)
+      (insert "\n"))))
 
 (defun arnold/add-constructor-arg (classname var)
   (save-excursion
@@ -255,13 +264,62 @@
     (arnold/indent-line)
     (arnold/indent-line)))
 
-(defun arnold/add-to-constructor (classname &optional field-name)
+(defun arnold/read-classname ()
+  (let* ((word (thing-at-point 'word))
+         (guess (when word
+                  (if (arnold/is-m-name word)
+                      (substring word 1)
+                    (arnold/upcase-first word)))))
+    (read-string "Classname: " guess)))
+
+
+(defun arnold/add-to-constructor (&optional classname field-name)
+  (interactive)
   (save-excursion
-    (let* ((field-name (or field-name (toggle-camel-str classname)))
+    (let* ((classname (or classname (arnold/read-classname)))
+           (field-name (or field-name (toggle-camel-str classname)))
            (var-name (toggle-camel-str field-name)))
       (arnold/def-private classname field-name)
       (arnold/add-constructor-arg classname var-name)
       (arnold/add-field-init-in-constructor field-name var-name))))
+
+(defun arnold/previous-class-member ()
+  (re-search-backward "private .* \\(m[a-zA-Z0-9_]*\\);" nil t))
+
+(defun arnold/class-member-name ()
+  (match-string 1))
+
+(defun arnold/find-class-members ()
+  (save-excursion
+    (arnold/find-constructor)
+    (loop while (arnold/previous-class-member)
+          collect (arnold/class-member-name))))
+
+(defun arnold/find-local-references (name)
+  (save-excursion
+    (arnold/find-constructor)
+     (loop while (re-search-forward name nil t)
+           if (equal (thing-at-point 'sexp) name)
+           collect (point))))
+
+(defun arnold/find-unused-fields ()
+  (loop for field in (arnold/find-class-members)
+        if (< (length (arnold/find-local-references field)) 2)
+        collect field))
+
+(defun arnold/delete-field (field)
+  (save-excursion
+    (arnold/find-constructor)
+    (loop while (arnold/previous-class-member)
+          if (equal field (arnold/class-member-name))
+          do (delete-region (beginning-of-thing 'line) (end-of-thing 'line)))))
+
+(defun arnold/delete-unused-fields ()
+  (interactive)
+  (loop for field in (arnold/find-unused-fields)
+        do (arnold/delete-field field)))
+
+
 
 
 (defun toggle-camel ()
@@ -282,8 +340,8 @@
 (defun open-last-phab ()
   (interactive)
   (save-excursion
-    (re-search-backward "http://phabricator.fb.com/" nil t)
-    (goto-link)))
+    (when (re-search-backward "phabricator.fb.com/D" nil t)
+      (goto-link))))
 
 
 

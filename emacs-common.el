@@ -216,6 +216,53 @@
         (camelCasify-word (substring input 1))
       (concat "m" (char-to-string (upcase (aref input 0))) (substring input 1)))))
 
+(defun arnold/find-constructor ()
+  (goto-char (point-min))
+  (let ((case-fold-search nil))
+    (re-search-forward (concat " " (file-name-base (buffer-file-name)) "("))
+    (forward-char -1)))
+
+(defun arnold/indent-line ()
+  (indent-region (beginning-of-thing 'line) (end-of-thing 'line)))
+
+(defun arnold/def-private (class field)
+  (save-excursion
+    (arnold/find-constructor)
+    (forward-line -1)
+    (insert (format "private %s %s;" class field))
+    (arnold/indent-line)
+    (insert "\n")))
+
+(defun arnold/add-constructor-arg (classname var)
+  (save-excursion
+    (arnold/find-constructor)
+    (forward-sexp)
+    (forward-char -1)
+    (insert-string ",\n")
+    (insert-string (format "%s %s" classname var) )
+    (arnold/indent-line)))
+
+(defun arnold/add-field-init-in-constructor (field-name var-name)
+  (save-excursion
+    (arnold/find-constructor)
+    (forward-sexp)
+    (forward-sexp) ;; now we're at '}'
+    (forward-char -1)
+
+    (save-excursion
+      (insert (format "%s = %s;\n" field-name var-name)))
+
+    (arnold/indent-line)
+    (arnold/indent-line)))
+
+(defun arnold/add-to-constructor (classname &optional field-name)
+  (save-excursion
+    (let* ((field-name (or field-name (toggle-camel-str classname)))
+           (var-name (toggle-camel-str field-name)))
+      (arnold/def-private classname field-name)
+      (arnold/add-constructor-arg classname var-name)
+      (arnold/add-field-init-in-constructor field-name var-name))))
+
 
 (defun toggle-camel ()
   (interactive)
@@ -226,6 +273,17 @@
     (delete-char (- end beg))
     (insert (toggle-camel-str word))))
 
+(defun goto-link ()
+  (interactive)
+  (arnold/open-in-browser (thing-at-point 'url)))
+
+(global-set-key "\C-cl" 'goto-link)
+
+(defun open-last-phab ()
+  (interactive)
+  (save-excursion
+    (re-search-backward "http://phabricator.fb.com/" nil t)
+    (goto-link)))
 
 
 

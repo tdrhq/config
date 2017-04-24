@@ -185,15 +185,18 @@
 (defun editors ()
   (remove-if-not (lambda (x) (window-is-editor x)) (screen-windows (current-screen))))
 
-(defun move-to-next-editor ()
+(defun find-next-editor ()
   (let* ((matches (editors))
          (other-matches (member (current-window) matches))
 
          (win (or
                (second other-matches)
                (first matches))))
-         (if win
-             (pull-window win))))
+    win))
+
+(defun move-to-next-editor ()
+  (if (find-next-editor)
+      (pull-window (find-next-editor))))
 
 (message "just before move-to-editor")
 
@@ -205,6 +208,27 @@
       (move-to-next-editor)
     (run-or-raise "emacsclient -c" '(:class "Emacs"))))
 
+(defcommand move-to-monitor () ()
+  (run-or-raise "monitor" '(:class "Monitor")))
+
+(defcommand move-to-thunderbird () ()
+  (run-or-raise "thunderbird" '(:class "Thunderbird")))
+
+(define-key *root-map* (kbd "C-d") "move-to-monitor")
+
+(define-key *root-map* (kbd "C-i") "move-to-thunderbird-2")
+
+(defcommand fix-titles () ()
+  (loop for w in (screen-windows (current-screen))
+        do
+        (if (equal (window-class w) "Thunderbird")
+            (setf (window-user-title w) "Thunderbird"))
+        (if (equal (window-class w) "Firefox")
+            (setf (window-user-title w) "Firefox"))
+        (if (equal (window-class w) "Monitor")
+            (setf (window-user-title w) "Monitor"))))
+
+
 (message "just before first define-key")
 
 (define-key *root-map* (kbd "C-e") "move-to-editor")
@@ -214,7 +238,6 @@
 
 ;; Start a swank server. Since this is brittle (because of the
 ;; existence of external slime repo), keep this at the absolute bottom
-
 
 
 (message "just before loading-swank")
@@ -241,10 +264,11 @@
 
 
 (setf *swank-loader* "/home/arnold/builds/slime/swank-loader.lisp")
-(when (probe-file *swank-loader*)
-  (load *swank-loader*)
+;;(when (probe-file *swank-loader*)
+;;  (load *swank-loader*)
 
-  (swank-loader:init :reload t))
+
+;;  (swank-loader::init :reload t))
 
 (message "after swank-loader")
  (defun load-swank ()

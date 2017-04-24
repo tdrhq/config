@@ -1,4 +1,4 @@
-;;; emacs-common.el --- Common emacs configuration that I share across machines
+;; emacs-common.el --- Common emacs configuration that I share across machines
 
 ;; Copyright (C) 2012  Arnold Noronha
 
@@ -170,12 +170,16 @@
 (defun gnome-notify (message)
   (shell-command (format "notify-send '%s'" message)))
 
+(require 'notifications)
+
 (defun compile-finished-notification (buf status)
   (message "Status is %s" status)
-  (gnome-notify
+  (notifications-notify :transient t :title
          (if (string-match "finished" status)
              "Compilation done"
            "Compilation failed")))
+
+;;(defun compile-finished-notification (buf status))
 
 (add-hook 'compilation-finish-functions
           'compile-finished-notification)
@@ -223,6 +227,7 @@
       (concat "m" (arnold/upcase-first input))))
 
 (defun arnold/find-constructor ()
+  (interactive)
   (goto-char (point-min))
   (let ((case-fold-search nil))
     (re-search-forward (concat " " (file-name-base (buffer-file-name)) "("))
@@ -245,11 +250,18 @@
 (defun arnold/add-constructor-arg (classname var)
   (save-excursion
     (arnold/find-constructor)
-    (forward-sexp)
-    (forward-char -1)
-    (insert-string ",\n")
-    (insert-string (format "%s %s" classname var) )
-    (arnold/indent-line)))
+    (arnold/add-call-arg (format "%s %s" classname var))))
+
+(defun arnold/add-call-arg (text)
+  (forward-sexp)
+  (forward-char -1)
+  (unless (eql (char-after (- (point) 1)) ?\( )
+    (insert ",\n"))
+  (insert text)
+  (arnold/indent-line))
+
+(defun arnold/field-def-snippet ()
+  (yas-expand-snippet "$1 m${2:$1}"))
 
 (defun arnold/add-field-init-in-constructor (field-name var-name)
   (save-excursion
@@ -283,6 +295,19 @@
       (arnold/add-constructor-arg classname var-name)
       (arnold/add-field-init-in-constructor field-name var-name))))
 
+(defun arnold/add-field-to-constructor ()
+  (interactive)
+  (save-excursion
+    (goto-char (line-beginning-position))
+    (if (re-search-forward "\\([^ ]*\\) \\([^ ]*\\);" (line-end-position) t)
+        (progn
+          (let* ((classname (match-string 1))
+                 (var-name (match-string 2))
+                 (local-var-name (toggle-camel-str var-name)))
+            (arnold/add-constructor-arg classname (toggle-camel-str var-name))
+            (arnold/add-field-init-in-constructor var-name local-var-name))))))
+
+
 (defun arnold/previous-class-member ()
   (re-search-backward "private .* \\(m[a-zA-Z0-9_]*\\);" nil t))
 
@@ -295,24 +320,104 @@
     (loop while (arnold/previous-class-member)
           collect (arnold/class-member-name))))
 
+(defun arnold/chomp (str)
+  "Chomp leading and tailing whitespace from STR."
+  (while (string-match "\\`\n+\\|^\\s-+\\|\\s-+$\\|\n+\\'"
+                       str)
+    (setq str (replace-match "" t t str)))
+  str)
+
+(defun arnold/starts-with (s begins)
+  "Return non-nil if string S starts with BEGINS."
+  (cond ((>= (length s) (length begins))
+         (string-equal (substring s 0 (length begins)) begins))
+        (t nil)))
+
+(defun arnold/line-is-assigning (name)
+  (save-excursion
+    (let ((line (arnold/chomp (thing-at-point 'line))))
+      (arnold/starts-with line (concat name " = ")))))
+
+
 (defun arnold/find-local-references (name)
   (save-excursion
     (arnold/find-constructor)
      (loop while (re-search-forward name nil t)
-           if (equal (thing-at-point 'sexp) name)
+           if (progn
+                (forward-char -1)
+                (and
+                 (equal (thing-at-point 'sexp) name)
+                 (not (arnold/line-is-assigning name))))
            collect (point))))
 
 (defun arnold/find-unused-fields ()
   (loop for field in (arnold/find-class-members)
-        if (< (length (arnold/find-local-references field)) 2)
+        if (equal (length (arnold/find-local-references field)) 0)
         collect field))
+
+(defun arnold/end-of-arglist-item ()
+  (save-excursion
+    (if (re-search-forward "[,)]" nil t)
+        (- (point) 2))))
+
+(defun arnold/arglist-bounds-of-items ()
+  ;; we're at the first '('
+  (let ((beg (point))
+        (end (save-excursion (forward-sexp) (- (point) 1))))
+    (loop while (< (point) end)
+          collect (cons (point) (arnold/end-of-arglist-item))
+          do (goto-char (+ (arnold/end-of-arglist-item) 2)))))
+
+(defun arnold/delete-arglist-item (idx)
+  (save-excursion
+    (let ((bounds (nth idx (arnold/arglist-bounds-of-items))))
+      (delete-region (car bounds) (+ 1 (cdr bounds)))
+      (goto-char (car bounds))
+      (if (equal ?, (char-after))
+          (delete-char 1)))))
+
+(defun arnold/delete-arglist-items (list)
+  (loop for i in (sort list '>)
+        do (arnold/delete-arglist-item i)))
+
+(defun arnold/get-type-for-var-def ()
+  "Get the type for the variable defined on the current line"
+  (save-excursion
+    (let ((line (thing-at-point 'line)))
+      (nth 1 (reverse (split-string line))))))
+
 
 (defun arnold/delete-field (field)
   (save-excursion
-    (arnold/find-constructor)
-    (loop while (arnold/previous-class-member)
-          if (equal field (arnold/class-member-name))
-          do (delete-region (beginning-of-thing 'line) (end-of-thing 'line)))))
+    (arnold/goto-field field)
+    (delete-region (beginning-of-thing 'line) (end-of-thing 'line))))
+
+(defun arnold/goto-field (&optional field)
+  (interactive)
+  (let (dest)
+    (save-excursion
+      (let ((field (or field (thing-at-point 'word))))
+        (arnold/find-constructor)
+        (loop while (arnold/previous-class-member)
+              if (equal field (arnold/class-member-name))
+              do (setq dest (point)))))
+    (if dest
+        (goto-char dest)
+      (message "Could not find a field for %s" field))))
+
+(defun arnold/get-field-type (&optional field)
+  (interactive)
+  (let ((field (or field (thing-at-point 'sexp))))
+    (save-excursion
+      (arnold/goto-field field)
+      (when (called-interactively-p 'any)
+        (message (arnold/get-type-for-var-def)))
+      (arnold/get-type-for-var-def))))
+
+(defun abgs ()
+  (interactive)
+  (let ((text (read-string "Search for: " (thing-at-point 'word))))
+    (arnold/open-in-browser (format "https://our.intern.facebook.com/intern/biggrep/?corpus=fbandroid&filename=&case=false&view=default&extre=&s=%s&engine=apr_strmatch&context=false&filter[uninteresting]=false&filter[intern]=false&filter[test]=false" text))))
 
 (defun arnold/delete-unused-fields ()
   (interactive)
@@ -390,14 +495,18 @@ mentioned in an erc channel" t)
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
-  (defun revert-all-buffers ()
-    "Refreshes all open buffers from their respective files."
-    (interactive)
-    (dolist (buf (buffer-list))
-      (with-current-buffer buf
-        (when (and (buffer-file-name) (file-exists-p (buffer-file-name)) (not (buffer-modified-p)))
-          (revert-buffer t t t) )))
-    (message "Refreshed open files.") )
+(defun revert-all-buffers (&optional even-modified)
+  "Refreshes all open buffers from their respective files."
+  (interactive)
+  (dolist (buf (buffer-list))
+    (with-current-buffer buf
+      (when (and (buffer-file-name) (file-exists-p (buffer-file-name)) (or even-modified (not (buffer-modified-p))))
+        (revert-buffer t t t) )))
+  (message "Refreshed open files."))
+
+(defun truly-revert-all-buffers ()
+  (interactive)
+  (revert-all-buffers t))
 
 (add-to-list 'auto-mode-alist '("BUCK$" . python-mode))
 
@@ -440,4 +549,173 @@ mentioned in an erc channel" t)
 (defun arnold/open-in-browser (url)
   (interactive)
 
-  (start-process "firefox" nil "firefox" url))
+  (start-process "google-chrome" nil "google-chrome" url))
+
+
+(defun arnold/only-make-request-data (data)
+  (mapconcat (lambda (arg)
+                 (concat (url-hexify-string (car arg))
+                         "="
+                         (url-hexify-string (cdr arg))))
+             data
+             "&"))
+
+(defun arnold/trace-internal (name task-name is-end)
+  (let ((url-request-method "POST")
+        (request-data (arnold/only-make-request-data
+                           (list
+                            (cons "name"  name)
+                            (cons "task_name" task-name)
+                            (cons "ts" (format "%.0f" (float-time (current-time))))
+                            (cons "is_end" (if is-end "true" "false"))))))
+    (url-retrieve (format "http://www.tdrhq.com/eff-trace?%s" request-data)
+                  (lambda (status)) nil t t)
+    nil))
+
+(defun arnold/start-trace (name task-name)
+  (arnold/trace-internal name task-name nil))
+
+(defun arnold/end-trace (name task-name)
+  (arnold/trace-internal name task-name t))
+
+;; (arnold/start-trace "foo" "foobar")
+;; (arnold/end-trace "foo" "foobar")
+
+
+(defun shell-mode-command (command)
+  (goto-char (point-max))
+  (insert command)
+  (comint-send-input))
+
+(defun goto-dir ()
+  (interactive)
+  (let ((dir (file-name-directory (buffer-file-name (current-buffer)))))
+    (switch-to-buffer "*shell*")
+    (shell-mode-command (concat "cd " dir))))
+
+
+(defun arnold/delete-compilation ()
+  (interactive)
+  (loop for w in (window-list)
+        if (let ((name (buffer-name (window-buffer w)))) (or (equal name "*Help*") (equal name "*compilation*")))
+        do (delete-window w)))
+
+(global-set-key "\C-cd" 'arnold/delete-compilation)
+
+(defun refactor ()
+  (interactive)
+  (let ((add-constructor-arg "Add constructor arg") (replace-term "Replace term in buffer") (test-option "Test option"))
+    (let ((request (popup-menu*
+                    (list add-constructor-arg replace-term test-option)
+                    :point (point))))
+      (cond
+       ((equal add-constructor-arg request) (arnold/add-to-constructor))
+       ((equal test-option request) (message "got option"))
+       ((equal replace-term request) (arnold/replace-term-in-buffer))
+       (t (message "Deselected"))))))
+
+(defun arnold/replace-term-in-buffer ()
+  (let ((orig (thing-at-point 'word)) (replacement (read-string "Replace with: ")))
+    (save-excursion
+      (goto-char (point-min))
+      (replace-string orig replacement))))
+
+
+(defun arnold/get-compile-status ()
+  (save-window-excursion
+    (set-buffer "*compilation*")
+    (let ((mode-line (if (listp mode-line-process) (second mode-line-process) mode-line-process)))
+      (cond
+       ((equal mode-line ":%s") 'run)
+       ((equal mode-line ":exit [0]") 'success)
+       (t 'error)))))
+
+(defun compile-status ()
+  (interactive)
+  (message "%s" (arnold/get-compile-status)))
+
+(defun break-up-params (&optional beg end)
+  (interactive)
+  (let ((beg2 (or beg (point)))
+        (end2 (or end (line-end-position)))
+        final-end)
+    (save-excursion
+      (while (search-forward "," end2 t)
+        (replace-match ",\n" nil t)
+        (c-indent-line-or-region)
+        (setf end2 (+ 1 end2))))))
+
+(defun break-up-params-line ()
+  (interactive)
+  (break-up-params (line-beginning-position)
+                   (line-end-position)))
+
+
+(defun arnold/arglist-cont (arg)
+  (let ((pos (cdr arg)))
+    (save-excursion
+      (goto-char (line-beginning-position))
+      (if (re-search-forward "^[ ]*\\." (line-end-position) t)
+          '++))))
+
+(defun arnold/add-arglist-cont ()
+  (loop for style in '(arglist-cont arglist-cont-nonempty)
+        do
+        (let ((a (assoc style c-offsets-alist)))
+          (setf (cdr a)
+                (cons 'arnold/arglist-cont (cdr a))))))
+
+
+(add-hook 'java-mode-hook 'arnold/add-arglist-cont)
+
+(defun arnold/delete-compilation-error (name)
+  (setf compilation-error-regexp-alist-alist
+        (assq-delete-all name compilation-error-regexp-alist-alist ))
+  (setf compilation-error-regexp-alist
+        (remove name compilation-error-regexp-alist)))
+
+(defun arnold/add-compilation-error (name match-config)
+  (arnold/delete-compilation-error name)
+  (setf compilation-error-regexp-alist-alist
+        (acons
+         name
+         match-config
+         compilation-error-regexp-alist-alist))
+  (setf compilation-error-regexp-alist
+        (cons
+         name
+         compilation-error-regexp-alist)))
+
+(defun arnold/read-all-sexp ()
+  (save-excursion
+    (goto-char (point-min))
+    (let (sexp)
+      (loop while (< (+ (point) 1) (point-max))
+            collect (read (current-buffer))))))
+
+(defun arnold/all-used-functions (sexps)
+  (loop for sexp in (cons nil sexps)
+        append (arnold/all-used-functions-r sexp)))
+
+(defun arnold/all-used-functions-r (sexp)
+  (when (and sexp (listp sexp))
+    (let ((this-call (car sexp)))
+      (if (listp this-call)
+          (loop for item in sexp
+                append (arnold/all-used-functions-r item))
+        (cons this-call
+              (loop for item in (cdr sexp)
+                    append (arnold/all-used-functions-r item)))))))
+
+(defun arnold/get-defuns (sexps)
+  (loop for sexp in sexps
+        if (eq (car sexp) 'defun)
+        collect (second sexp)))
+
+(defun arnold/find-unused-methods ()
+  (interactive)
+  (let ((defuned-methods (arnold/get-defuns (arnold/read-all-sexp)))
+        (used-methods (arnold/all-used-functions (arnold/read-all-sexp))))
+    (loop for defuned in defuned-methods
+          if (not (member defuned used-methods))
+          collect defuned)))

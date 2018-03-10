@@ -719,3 +719,9 @@ mentioned in an erc channel" t)
     (loop for defuned in defuned-methods
           if (not (member defuned used-methods))
           collect defuned)))
+
+
+(arnold/add-compilation-error
+ 'gradle-first-error
+ '(":core:compileDebugAndroidTestJavaWithJavac\\(.*\\):\\(.*\\): error:.*"
+   1 2))

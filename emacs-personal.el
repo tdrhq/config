@@ -30,14 +30,14 @@
   ;; If there is more than one, they won't work right.
  '(my-long-line-face ((((class color)) (:background "gray88"))) t))
 
-(add-hook 'font-lock-mode-hook
-            (function
-             (lambda ()
-               (setq font-lock-keywords
-                     (append font-lock-keywords
-                             '(("\t+" (0 'my-tab-face t))
-                               ("^.\\{101,\\}$" (0 'my-long-line-face t))
-                               ("[ \t]+$"      (0 'my-trailing-space-face t))))))))
+;; (add-hook 'font-lock-mode-hook
+;;             (function
+;;              (lambda ()
+;;                (setq font-lock-keywords
+;;                      (append font-lock-keywords
+;;                              '(("\t+" (0 'my-tab-face t))
+;;                                ("^.\\{101,\\}$" (0 'my-long-line-face t))
+;;                                ("[ \t]+$"      (0 'my-trailing-space-face t))))))))
 
 (global-cwarn-mode )
 (setq load-path (cons (expand-file-name "~/.emacs.d/") load-path))
@@ -82,7 +82,7 @@
 
 ;;(set-default-font "dejavu sans mono:pixelsize=16")
 ;;(set-default-font "courier:pixelsize=16")
-(set-default-font "bitstream vera sans mono:pixelsize=14")
+;;(set-default-font "bitstream vera sans mono:pixelsize=14")
 
 ;; for js
 (setq-default tab-width 4)
@@ -173,13 +173,3 @@
 (setq outline-regexp "[*\f]+")
 
 (require 'cl)
-
-
-
-
-
-
-
-
-
-

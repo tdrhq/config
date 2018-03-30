@@ -722,6 +722,16 @@ mentioned in an erc channel" t)
 
 
 (arnold/add-compilation-error
- 'gradle-first-error
+ 'gradle-first-error-test
  '(":core:compileDebugAndroidTestJavaWithJavac\\(.*\\):\\(.*\\): error:.*"
+   1 2))
+
+(arnold/add-compilation-error
+ 'gradle-first-error
+ '(":core:compileDebugJavaWithJavac\\(.*\\):\\(.*\\): error:.*"
+   1 2))
+
+(arnold/add-compilation-error
+ 'gradle-app=first-error
+ '(":compileDebugJavaWithJavac\\(.*\\):\\(.*\\): error:.*"
    1 2))

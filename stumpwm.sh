@@ -1,3 +1,4 @@
+export PATH=~/.local/bin:$PATH
 gnome-settings-daemon &
 nm-applet --sm-disable &
 

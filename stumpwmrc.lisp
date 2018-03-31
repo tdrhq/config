@@ -2,7 +2,6 @@
 (in-package :stumpwm)
 (set-prefix-key (kbd "C-u"))
 
-
 ;; xlock
 (stumpwm:define-key stumpwm:*top-map* (stumpwm:kbd "C-M-l") "run-shell-command xlock")
 (define-key *top-map* (kbd "C-M-o") "run-shell-command fetchotp -x --username Google\\ Internal\\ 2Factor")
@@ -44,7 +43,11 @@
 (define-key *root-map* (kbd "C-w") "windowlist")
 (define-key *root-map* (kbd "c") "exec urxvt")
 
+(defun is-personal-laptop ()
+  (equal (machine-instance) "arnold-laptop"))
 
+(defun is-desktop ()
+  (equal (machine-instance) "ThinkCenter"))
 
 ;; (let ((count 0)
   ;; (defun incrcount () (setf count (1+ count))))
@@ -70,10 +73,12 @@
 ;; (run-shell-command "gnome-power-manager &")
 
 ;; volume control
-(load-module "amixer")
-(define-key *top-map* (kbd "XF86AudioLowerVolume") "amixer-Master-1-")
-(define-key *top-map* (kbd "XF86AudioRaiseVolume") "amixer-Master-1+")
-(define-key *top-map* (kbd "XF86AudioMute") "amixer-Master-toggle")
+
+(unless (is-personal-laptop)
+  (load-module "amixer")
+  (define-key *top-map* (kbd "XF86AudioLowerVolume") "amixer-Master-1-")
+  (define-key *top-map* (kbd "XF86AudioRaiseVolume") "amixer-Master-1+")
+  (define-key *top-map* (kbd "XF86AudioMute") "amixer-Master-toggle"))
 
 
 ;; get a warning red box around an unfocused window
@@ -264,11 +269,8 @@
 
 
 (setf *swank-loader* "/home/arnold/builds/slime/swank-loader.lisp")
-;;(when (probe-file *swank-loader*)
-;;  (load *swank-loader*)
-
-
-;;  (swank-loader::init :reload t))
+(load *swank-loader*)
+(swank-loader::init)
 
 (message "after swank-loader")
  (defun load-swank ()

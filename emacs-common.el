@@ -764,3 +764,18 @@ mentioned in an erc channel" t)
 (add-hook 'compilation-mode-hook 'arnold/disable-saving-on-buffer)
 (add-hook 'lisp-interaction-mode 'arnold/disable-saving-on-buffer)
 (add-hook 'term-mode-hook 'arnold/disable-saving-on-buffer)
+
+(arnold/add-compilation-error
+ 'gradle-first-error-test
+ '(":core:compileDebugAndroidTestJavaWithJavac\\(.*\\):\\(.*\\): error:.*"
+   1 2))
+
+(arnold/add-compilation-error
+ 'gradle-first-error
+ '(":core:compileDebugJavaWithJavac\\(.*\\):\\(.*\\): error:.*"
+   1 2))
+
+(arnold/add-compilation-error
+ 'gradle-app=first-error
+ '(":compileDebugJavaWithJavac\\(.*\\):\\(.*\\): error:.*"
+   1 2))

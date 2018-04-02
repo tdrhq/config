@@ -26,7 +26,7 @@
 
 (require 'cl)
 
-(add-to-list 'load-path "~/config")
+(add-to-list 'load-path (file-name-directory load-file-name))
 
 (ido-mode t)
 (setq ido-enable-flex-matching t)

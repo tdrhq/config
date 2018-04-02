@@ -697,28 +697,30 @@ mentioned in an erc channel" t)
 (add-hook 'java-mode-hook 'arnold/add-arglist-cont)
 
 (defun arnold/delete-compilation-error (name)
-  (setf compilation-error-regexp-alist-alist
-        (assq-delete-all name compilation-error-regexp-alist-alist ))
-  (setf compilation-error-regexp-alist
-        (remove name compilation-error-regexp-alist)))
+  ;;(setf compilation-error-regexp-alist-alist
+  ;;      (assq-delete-all name compilation-error-regexp-alist-alist ))
+  ;;(setf compilation-error-regexp-alist
+  ;;      (remove name compilation-error-regexp-alist))
+  )
 
 (defun arnold/add-compilation-error (name match-config)
   (arnold/delete-compilation-error name)
-  (setf compilation-error-regexp-alist-alist
-        (acons
-         name
-         match-config
-         compilation-error-regexp-alist-alist))
-  (setf compilation-error-regexp-alist
-        (cons
-         name
-         compilation-error-regexp-alist)))
+  ;;(setf compilation-error-regexp-alist-alist
+  ;;      (acons
+  ;;       name
+  ;;      match-config
+  ;;       compilation-error-regexp-alist-alist))
+  ;;(setf compilation-error-regexp-alist
+  ;;      (cons
+  ;;       name
+  ;;       compilation-error-regexp-alist))
+  )
 
 (defun arnold/read-all-sexp ()
   (save-excursion
     (goto-char (point-min))
     (let (sexp)
-      (loop while (< (+ (point) 1) (point-max))
+    (loop while (< (+ (point) 1) (point-max))
             collect (read (current-buffer))))))
 
 (defun arnold/all-used-functions (sexps)

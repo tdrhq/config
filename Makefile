@@ -2,8 +2,8 @@
 PATH:=/home/arnold/builds/emacs/src:${PATH}
 
 emacs-test:
-	emacs --script emacs-common.el
+	which emacs
+	emacs --no-desktop -q  --no-init-file --kill -l jenkins.el
 
 jenkins:
-	PATH=${PATH} which emacs
-	PATH=${PATH} $(MAKE) emacs-test
+	PATH=${PATH} timeout 60 $(MAKE) emacs-test

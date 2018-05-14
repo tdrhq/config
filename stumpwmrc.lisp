@@ -130,9 +130,17 @@
   (message "running screensaver")
   (run-shell-command "xscreensaver-command -l || gnome-screensaver-command -l"))
 
+(defun read-lines (stream)
+  (let ((line (read-line stream nil)))
+    (when line
+      (cons (format nil "~A~%" line) (read-lines stream)))))
+
 (defun run-and-get-output (cmd &optional (args ()) (env ()))
-  (let ((p (sb-ext:process-output (sb-ext:run-program cmd () :output :stream :wait t :search t :environment env))))
-    (read-line p nil 'foo)))
+  (with-open-stream
+   (p (sb-ext:process-output (sb-ext:run-program cmd () :output :stream :wait t :search t :environment env)))
+   (apply #'concatenate 'string (read-lines p))))
+
+
 
 (run-and-get-output "date")
 

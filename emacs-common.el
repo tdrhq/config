@@ -26,7 +26,7 @@
 
 (require 'cl)
 
-(add-to-list 'load-path "~/config")
+(add-to-list 'load-path (file-name-directory load-file-name))
 
 (ido-mode t)
 (setq ido-enable-flex-matching t)
@@ -174,10 +174,12 @@
 
 (defun compile-finished-notification (buf status)
   (message "Status is %s" status)
-  (notifications-notify :transient t :title
-         (if (string-match "finished" status)
-             "Compilation done"
-           "Compilation failed")))
+  (ignore-errors
+      (notifications-notify :transient t :title
+                            (if (string-match "finished" status)
+                                "Compilation done"
+                              "Compilation failed"))))
+
 
 ;;(defun compile-finished-notification (buf status))
 
@@ -440,7 +442,30 @@
   (interactive)
   (arnold/open-in-browser (thing-at-point 'url)))
 
-(global-set-key "\C-cl" 'goto-link)
+(defun goto-last-link ()
+  (message "going to last link")
+  (let ((text (buffer-substring (point-min) (point-max))))
+    (with-temp-buffer
+      (insert text)
+      (goto-char (point-max))
+      (re-search-backward "ttp")
+      (message "We're at: %s" (thing-at-point 'line))
+      (goto-link))))
+
+(defun goto-link-clever ()
+  (interactive)
+  (if (and (eq major-mode 'term-mode)
+           (term-in-char-mode))
+      (goto-last-link)
+    (goto-link)))
+
+(global-set-key "\C-cl" 'goto-link-clever)
+
+(defun arnold-ansi-term-hook ()
+  (local-set-key "\C-cl" 'goto-link-clever))
+
+(add-hook 'term-mode-hook 'arnold-ansi-term-hook)
+
 
 (defun open-last-phab ()
   (interactive)
@@ -500,7 +525,11 @@ mentioned in an erc channel" t)
   (interactive)
   (dolist (buf (buffer-list))
     (with-current-buffer buf
-      (when (and (buffer-file-name) (file-exists-p (buffer-file-name)) (or even-modified (not (buffer-modified-p))))
+      (when (and
+             (buffer-file-name)
+             (file-exists-p (buffer-file-name))
+             (or even-modified (not (buffer-modified-p)))
+             (not (string-suffix-p ".jar" (buffer-file-name))))
         (revert-buffer t t t) )))
   (message "Refreshed open files."))
 
@@ -549,7 +578,7 @@ mentioned in an erc channel" t)
 (defun arnold/open-in-browser (url)
   (interactive)
 
-  (start-process "google-chrome" nil "google-chrome" url))
+  (browse-url url))
 
 
 (defun arnold/only-make-request-data (data)
@@ -584,13 +613,12 @@ mentioned in an erc channel" t)
 
 (defun shell-mode-command (command)
   (goto-char (point-max))
-  (insert command)
-  (comint-send-input))
+  (term/insert (format "%s\n" command )))
 
 (defun goto-dir ()
   (interactive)
   (let ((dir (file-name-directory (buffer-file-name (current-buffer)))))
-    (switch-to-buffer "*shell*")
+    (switch-to-buffer "*ansi-term*")
     (shell-mode-command (concat "cd " dir))))
 
 
@@ -669,28 +697,30 @@ mentioned in an erc channel" t)
 (add-hook 'java-mode-hook 'arnold/add-arglist-cont)
 
 (defun arnold/delete-compilation-error (name)
-  (setf compilation-error-regexp-alist-alist
-        (assq-delete-all name compilation-error-regexp-alist-alist ))
-  (setf compilation-error-regexp-alist
-        (remove name compilation-error-regexp-alist)))
+  ;;(setf compilation-error-regexp-alist-alist
+  ;;      (assq-delete-all name compilation-error-regexp-alist-alist ))
+  ;;(setf compilation-error-regexp-alist
+  ;;      (remove name compilation-error-regexp-alist))
+  )
 
 (defun arnold/add-compilation-error (name match-config)
   (arnold/delete-compilation-error name)
-  (setf compilation-error-regexp-alist-alist
-        (acons
-         name
-         match-config
-         compilation-error-regexp-alist-alist))
-  (setf compilation-error-regexp-alist
-        (cons
-         name
-         compilation-error-regexp-alist)))
+  ;;(setf compilation-error-regexp-alist-alist
+  ;;      (acons
+  ;;       name
+  ;;      match-config
+  ;;       compilation-error-regexp-alist-alist))
+  ;;(setf compilation-error-regexp-alist
+  ;;      (cons
+  ;;       name
+  ;;       compilation-error-regexp-alist))
+  )
 
 (defun arnold/read-all-sexp ()
   (save-excursion
     (goto-char (point-min))
     (let (sexp)
-      (loop while (< (+ (point) 1) (point-max))
+    (loop while (< (+ (point) 1) (point-max))
             collect (read (current-buffer))))))
 
 (defun arnold/all-used-functions (sexps)
@@ -720,6 +750,22 @@ mentioned in an erc channel" t)
           if (not (member defuned used-methods))
           collect defuned)))
 
+(defun term/insert (text)
+  "similar to insert, but does the right thing in terminals"
+  (term-send-raw-string text))
+
+
+(defun arnold/empty-func ()
+  (interactive)
+  (message "Cannot save buffer"))
+
+(defun arnold/disable-saving-on-buffer ()
+  (interactive)
+  (local-set-key (kbd "\C-x\C-s") 'arnold/empty-func))
+
+(add-hook 'compilation-mode-hook 'arnold/disable-saving-on-buffer)
+(add-hook 'lisp-interaction-mode 'arnold/disable-saving-on-buffer)
+(add-hook 'term-mode-hook 'arnold/disable-saving-on-buffer)
 
 (arnold/add-compilation-error
  'gradle-first-error-test

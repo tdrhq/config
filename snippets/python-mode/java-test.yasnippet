@@ -1,0 +1,15 @@
+# -*- mode: snippet -*-
+# name: java-test
+# key: java-test
+# expand-env: ((package-name (file-name-base (directory-file-name (file-name-directory (buffer-file-name))))))
+# --
+java_test(
+  name = '`package-name`',
+  srcs = glob(['*.java']),
+  deps = [
+    '`(replace-regexp-in-string "//javatests" "//java" (arnold/guess-buck-target))`',
+  ],
+  visibility = [
+    'PUBLIC',
+  ],
+)

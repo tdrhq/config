@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: android_prebuilt_aar
+# key: aar
+# --
+android_prebuilt_aar(
+    name = "$1",
+    aar = "$1-$2.aar",
+    source_jar = "$1-$2-sources.jar",
+    visibility = [
+        "PUBLIC",
+    ],
+)

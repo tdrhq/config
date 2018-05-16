@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: sleep
+# key: sleep
+# --
+try {
+  Thread.sleep($1);
+} catch (InterruptedException e) {
+  throw new RuntimeException(e);
+}

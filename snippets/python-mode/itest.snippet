@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: itest
+# key: itest
+# expand-env: ((target-name (file-name-nondirectory (directory-file-name (file-name-directory (buffer-file-name))))))
+# --
+load("@xplat//configurations/buck/android:instrumentation_tests.bzl", "instrumentation_test")
+
+instrumentation_test(
+    name = "`target-name`",
+    srcs = glob(["*.java"]),
+    deps = [
+    ],
+)

@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: onuithread
+# key: onuithread
+# expand-env: ((yas-indent-line 'auto))
+# --
+UiThreadHelper.runOnUiThread(new Runnable() {
+  @Override
+  public void run() {
+    $0
+  }
+});

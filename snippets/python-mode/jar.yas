@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: jar
+# key: jar
+# --
+prebuilt_jar(
+    name = "$1",
+    binary_jar = "$1-$2.jar",
+    source_jar = "$1-$2-sources.jar",
+    visibility = [
+        "PUBLIC",
+    ]
+)

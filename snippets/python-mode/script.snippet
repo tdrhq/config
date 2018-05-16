@@ -1,0 +1,23 @@
+# -*- mode: snippet -*-
+# name: script
+# key: script
+# expand-env: ((yas-indent-line 'fixed))
+# --
+#!/usr/bin/env python
+
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
+import sys, scribe_logger
+
+$0
+
+def main(argv):
+    sys.exit(argv)
+
+
+if __name__ == '__main__':
+    with scribe_logger.ErrorHandler():
+        sys.exit(main(sys.argv))

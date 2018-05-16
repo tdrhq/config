@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: set-get
+# key: set-get
+# --
+private ${1:TypeName} m${2:$1};
+
+public void set$2($1 ${2:$(camelCasify-word yas-text)}) {
+   m$2 = ${2:$(camelCasify-word yas-text)};
+}
+
+public $1 get$2() {
+  return m$2;
+}

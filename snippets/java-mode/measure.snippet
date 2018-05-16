@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: measure
+# key: measure
+# --
+ViewHelpers.setupView(${1:mView})
+     .setExactWidthDp($2)
+     .layout()
+     .dispatchPreDraw();

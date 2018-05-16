@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: appc
+# key: appc
+# --
+android.support.v7.appcompat.

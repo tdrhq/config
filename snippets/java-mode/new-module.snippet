@@ -1,0 +1,17 @@
+# -*- mode: snippet -*-
+# name: new-module
+# key: new-module
+# expand-env: ((class-name (file-name-sans-extension (file-name-nondirectory (buffer-file-name)))))
+# --
+// Copyright 2004-present Facebook. All Rights Reserved.
+
+package com.facebook.places.checkin.activity;
+
+import com.facebook.inject.AbstractLibraryModule;
+
+public class `class-name` extends AbstractLibraryModule {
+  @Override
+  protected void configure() {
+    $0
+  }
+}

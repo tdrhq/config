@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: tests-for
+# key: tests-for
+# expand-env: ((package-name  (replace-regexp-in-string "[/]" "." (directory-file-name (file-relative-name (file-name-directory (buffer-file-name)) "~/fbandroid")))) (class-name (file-name-sans-extension (file-name-nondirectory (buffer-file-name)))))
+# --
+/**
+ * Tests {@link `(substring class-name 0 -4)`}
+ */

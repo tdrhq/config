@@ -773,3 +773,8 @@ mentioned in an erc channel" t)
  'gradle-first-error-test
  '(":.*:.*WithJavac\\(.*\\):\\(.*\\): error:.*"
    1 2))
+
+(setf yas-snippet-dirs
+      (cons
+       (concat (getenv "HOME") "/config/snippets")
+       yas-snippet-dirs))

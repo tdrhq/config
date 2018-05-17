@@ -3,7 +3,7 @@
 # key: android-template
 # expand-env: ((package-name  (replace-regexp-in-string "[/]" "." (directory-file-name (file-relative-name (file-name-directory (buffer-file-name)) "~/fbandroid")))) (class-name (file-name-sans-extension (file-name-nondirectory (buffer-file-name)))))
 # --
-`(arnold/get-copyright (current-workspace))`
+// (c) 2018 Arnold Noronha <arnold@tdrhq.com>
 
 package `(lal-expected-package-name-from-buffername)`;
 

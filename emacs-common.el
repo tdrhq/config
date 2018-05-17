@@ -26,6 +26,7 @@
 
 (require 'cl)
 (require 'compile)
+(require 'yasnippet)
 
 (add-to-list 'load-path (file-name-directory load-file-name))
 

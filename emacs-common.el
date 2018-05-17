@@ -775,6 +775,7 @@ mentioned in an erc channel" t)
  '(":.*:.*WithJavac\\(.*\\):\\(.*\\): error:.*"
    1 2))
 
+
 (setf yas-snippet-dirs
       (cons
        (concat (getenv "HOME") "/config/snippets")

@@ -25,6 +25,7 @@
 ;;; Code:
 
 (require 'cl)
+(require 'compile)
 
 (add-to-list 'load-path (file-name-directory load-file-name))
 
@@ -695,25 +696,26 @@ mentioned in an erc channel" t)
 
 
 (add-hook 'java-mode-hook 'arnold/add-arglist-cont)
-
 (defun arnold/delete-compilation-error (name)
-  ;;(setf compilation-error-regexp-alist-alist
-  ;;      (assq-delete-all name compilation-error-regexp-alist-alist ))
-  ;;(setf compilation-error-regexp-alist
-  ;;      (remove name compilation-error-regexp-alist))
-  )
+  (when compilation-error-regexp-alist-alist
+    (setf compilation-error-regexp-alist-alist
+	  (assq-delete-all name compilation-error-regexp-alist-alist )))
+  (when compilation-error-regexp-alist
+    (setf compilation-error-regexp-alist
+	  (remove name compilation-error-regexp-alist))))
+
 
 (defun arnold/add-compilation-error (name match-config)
   (arnold/delete-compilation-error name)
-  ;;(setf compilation-error-regexp-alist-alist
-  ;;      (acons
-  ;;       name
-  ;;      match-config
-  ;;       compilation-error-regexp-alist-alist))
-  ;;(setf compilation-error-regexp-alist
-  ;;      (cons
-  ;;       name
-  ;;       compilation-error-regexp-alist))
+  (setf compilation-error-regexp-alist-alist
+        (acons
+         name
+         match-config
+         compilation-error-regexp-alist-alist))
+  (setf compilation-error-regexp-alist
+        (cons
+         name
+         compilation-error-regexp-alist))
   )
 
 (defun arnold/read-all-sexp ()
@@ -769,15 +771,5 @@ mentioned in an erc channel" t)
 
 (arnold/add-compilation-error
  'gradle-first-error-test
- '(":core:compileDebugAndroidTestJavaWithJavac\\(.*\\):\\(.*\\): error:.*"
-   1 2))
-
-(arnold/add-compilation-error
- 'gradle-first-error
- '(":core:compileDebugJavaWithJavac\\(.*\\):\\(.*\\): error:.*"
-   1 2))
-
-(arnold/add-compilation-error
- 'gradle-app=first-error
- '(":compileDebugJavaWithJavac\\(.*\\):\\(.*\\): error:.*"
+ '(":.*:.*WithJavac\\(.*\\):\\(.*\\): error:.*"
    1 2))

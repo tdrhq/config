@@ -775,6 +775,24 @@ mentioned in an erc channel" t)
  '(":.*:.*WithJavac\\(.*\\):\\(.*\\): error:.*"
    1 2))
 
+(arnold/add-compilation-error
+ 'gradle-first-error-test-for-kotlin
+ '(":.*:.*Kotline: \\(.*.kt\\): (\\(.*\\), .*):.*"
+   1 2))
+
+(arnold/add-compilation-error
+ 'gradle-kotlin-regular-error
+ '("e: \\(.*.kt\\): (\\(.*\\), .*):.*"
+   1 2))
+
+
+(arnold/add-compilation-error
+ 'gradle-first-error-xml
+ '(":.*:mergeDebugResources\\(.*\\):\\(.*\\): .*error:.*"
+   1 2))
+
+
+
 
 (setf yas-snippet-dirs
       (cons

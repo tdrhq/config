@@ -776,7 +776,7 @@ mentioned in an erc channel" t)
    1 2))
 
 (arnold/add-compilation-error
- 'gradle-first-error-test
+ 'gradle-first-error-test-javadoc
  '(":.*:.*androidJavadoc\\(.*\\):\\(.*\\): error:.*"
    1 2))
 

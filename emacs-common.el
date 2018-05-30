@@ -775,6 +775,11 @@ mentioned in an erc channel" t)
  '(":.*:.*WithJavac\\(.*\\):\\(.*\\): error:.*"
    1 2))
 
+o(arnold/add-compilation-error
+ 'gradle-first-error-test
+ '(":.*:.*androidJavadoc\\(.*\\):\\(.*\\): error:.*"
+   1 2))
+
 (arnold/add-compilation-error
  'gradle-first-error-test-for-kotlin
  '(":.*:.*Kotline: \\(.*.kt\\): (\\(.*\\), .*):.*"

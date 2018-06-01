@@ -57,6 +57,13 @@
 	(rename-file file to))
     (set-visited-file-name to)))
 
+(defun rename-java-bf ()
+  (interactive)
+  (let ((old-name (buffer-file-name))
+        (new-base (arnold/get-buffer-class-name)))
+    (rename-bf (concat (file-name-directory old-name) "/" new-base ".java"))))
+
+
 
 (defun arnold-term-char-mode ()
   (interactive)
@@ -317,6 +324,12 @@
 
 (defun arnold/class-member-name ()
   (match-string 1))
+
+(defun arnold/get-buffer-class-name ()
+  (save-excursion
+    (goto-char 0)
+    (re-search-forward "class ")
+    (thing-at-point 'word)))
 
 (defun arnold/find-class-members ()
   (save-excursion

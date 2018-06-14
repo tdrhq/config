@@ -152,7 +152,7 @@
 
 (defcommand echo-date () ()
   "Display the date and time."
-  (apply #'message "~a:~%CA :~a~%NYC:~a~%IST:~a" (run-and-get-output "/usr/bin/acpi") (mapcar #'time-for-zone (list "America/Los_Angeles" "America/New_York" "Asia/Calcutta" ))))
+  (apply #'message "~a:~%CA  :~a~%MPLS:~a~%NYC :~a~%IST :~a" (run-and-get-output "/usr/bin/acpi") (mapcar #'time-for-zone (list "America/Los_Angeles" "America/Chicago" "America/New_York" "Asia/Calcutta" ))))
 
 (defcommand setup-thinkpad-kbd () ()
             " setup the think pad keyboard"

@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: test-template
+# key: test-template
+# expand-env: ((class-name (file-name-sans-extension (file-name-nondirectory (buffer-file-name)))))
+# --
+package `(lal-expected-package-name-from-buffername)`
+
+import org.junit.Assert.*
+
+public class `class-name` {
+  $0
+}

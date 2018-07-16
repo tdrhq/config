@@ -282,7 +282,7 @@
     (forward-char -1)
 
     (save-excursion
-      (insert (format "%s = %s;\n" field-name var-name)))
+      (insert (format "this.%s = %s;\n" field-name var-name)))
 
     (arnold/indent-line)
     (arnold/indent-line)))
@@ -314,8 +314,8 @@
         (progn
           (let* ((classname (match-string 1))
                  (var-name (match-string 2))
-                 (local-var-name (toggle-camel-str var-name)))
-            (arnold/add-constructor-arg classname (toggle-camel-str var-name))
+                 (local-var-name var-name))
+            (arnold/add-constructor-arg classname var-name)
             (arnold/add-field-init-in-constructor var-name local-var-name))))))
 
 

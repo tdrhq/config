@@ -2,4 +2,4 @@
 # name: priv
 # key: priv
 # --
-private ${1:TypeName} m${2:$1};
+private ${1:TypeName} ${2:varName$(camelCasify-word (yas-field-value 1))};

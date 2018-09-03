@@ -819,3 +819,8 @@ mentioned in an erc channel" t)
 
 (setq make-backup-files nil) ; stop creating backup~ files
 (setq auto-save-default nil) ; stop creating #autosave# files
+
+
+(defun git-add ()
+  (interactive)
+  (shell-command (format "git add %s" (buffer-file-name))))

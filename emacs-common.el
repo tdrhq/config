@@ -789,6 +789,17 @@ mentioned in an erc channel" t)
    1 2))
 
 (arnold/add-compilation-error
+ 'plain-java-first-error-test
+ '(":.*:.*compileJava\\(.*\\):\\(.*\\): error:.*"
+   1 2))
+
+(arnold/add-compilation-error
+ 'plain-java-first-error-test-test
+ '(":.*:.*compileTestJava\\(.*\\):\\(.*\\): error:.*"
+   1 2))
+
+
+(arnold/add-compilation-error
  'gradle-first-error-test-javadoc
  '(":.*:.*androidJavadoc\\(.*\\):\\(.*\\): error:.*"
    1 2))

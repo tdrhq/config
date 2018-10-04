@@ -74,11 +74,11 @@
 
 ;; volume control
 
-(unless (is-personal-laptop)
-  (load-module "amixer")
-  (define-key *top-map* (kbd "XF86AudioLowerVolume") "amixer-Master-1-")
-  (define-key *top-map* (kbd "XF86AudioRaiseVolume") "amixer-Master-1+")
-  (define-key *top-map* (kbd "XF86AudioMute") "amixer-Master-toggle"))
+;;(unless (is-personal-laptop)
+;;  (load-module "amixer")
+;;  (define-key *top-map* (kbd "XF86AudioLowerVolume") "amixer-Master-1-")
+;;  (define-key *top-map* (kbd "XF86AudioRaiseVolume") "amixer-Master-1+")
+;;  (define-key *top-map* (kbd "XF86AudioMute") "amixer-Master-toggle"))
 
 
 ;; get a warning red box around an unfocused window

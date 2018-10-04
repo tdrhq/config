@@ -8,5 +8,6 @@ export GPG_AGENT_INFO
 export GNOME_KEYRING_CONTROL
 export GNOME_KEYRING_PID
 /usr/lib/notification-daemon/notification-daemon &
+gnome-screensaver &
 
 ~arnold/builds/stumpwm/stumpwm

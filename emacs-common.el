@@ -835,3 +835,5 @@ mentioned in an erc channel" t)
 (defun git-add ()
   (interactive)
   (shell-command (format "git add %s" (buffer-file-name))))
+
+(setq whitespace-line-column  100)

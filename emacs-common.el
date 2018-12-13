@@ -837,3 +837,7 @@ mentioned in an erc channel" t)
   (shell-command (format "git add %s" (buffer-file-name))))
 
 (setq whitespace-line-column  100)
+
+(defun start-emulator ()
+  (interactive)
+  (shell-command "cd ~/ && ./scripts/start_emulator -no-window &" "*emulator*"))

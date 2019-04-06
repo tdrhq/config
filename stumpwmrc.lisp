@@ -55,9 +55,21 @@
 
 ;; frame preferences
 
-(clear-window-placement-rules)
-(define-frame-preference "Default"
-  (0 t t :instance "google-chrome"))
+(defcommand make-standard-preference () ()
+  (clear-window-placement-rules)
+  (define-frame-preference "Default"
+      (0 t t :instance "firefox"))
+
+  (define-frame-preference "Default"
+      (0 t t :instance "emacs")))
+
+(defcommand make-split-screen-preference () ()
+  (clear-window-placement-rules)
+  (define-frame-preference "Default"
+      (0 t t :instance "firefox"))
+
+  (define-frame-preference "Default"
+      (1 t t :instance "emacs")))
 
 (setf *window-format* "%m%n%s%2gg0c: %20t")
 
@@ -106,7 +118,7 @@
 (defcommand set-iceweasel-default () ()
             (setf *c-b-browser* (cons "firefox" "Iceweasel")))
 
-(set-chrome-default)
+(set-firefox-default)
 
 (defcommand google-chrome () ()
 	    "Load google chrome"
@@ -275,18 +287,17 @@
 
 (message "the end")
 
-
-(setf *swank-loader* "/home/arnold/builds/slime/swank-loader.lisp")
-(load *swank-loader*)
-(swank-loader::init)
-
+(ql:quickload "swank")
 (message "after swank-loader")
- (defun load-swank ()
+(defun load-swank ()
+  (load-swank-step-2))
+
+(defun load-swank-step-2 ()
   (swank:create-server :port 5005
-                       :style swank:*communication-style*
                        :dont-close t)
   (echo-string (current-screen)
                "Starting swank. M-x slime-connect RET RET, then (in-package stumpwm)."))
+
 
 (defcommand swank () ()
   (load-swank))

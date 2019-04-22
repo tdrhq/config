@@ -841,3 +841,18 @@ mentioned in an erc channel" t)
 (defun start-emulator ()
   (interactive)
   (shell-command "cd ~/ && ./scripts/start_emulator -no-window &" "*emulator*"))
+
+(defun buck/get-target (file)
+  (let ((root (workspace-root (ede-current-project))))
+    (let ((dir (substring (file-name-directory file) 0 -1)))
+      (message "dir is %s" dir)
+      (when (file-exists-p (format "%s/BUCK" dir))
+        (let ((target (file-name-nondirectory dir)))
+          (format "//%s:%s" (file-relative-name dir root) target))))))
+
+(defun test-current-buffer ()
+  (interactive)
+  (let ((target (buck/get-target (buffer-file-name))))
+    (compile (format "buck test %s -f %s"
+                     target
+                     (file-name-base (buffer-file-name))))))

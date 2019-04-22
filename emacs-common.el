@@ -853,6 +853,6 @@ mentioned in an erc channel" t)
 (defun test-current-buffer ()
   (interactive)
   (let ((target (buck/get-target (buffer-file-name))))
-    (compile (format "buck test %s -f %s"
-                     target
-                     (file-name-base (buffer-file-name))))))
+    (compile (compilation-read-command (format "buck test %s -f %s"
+                                               target
+                                               (file-name-base (buffer-file-name)))))))

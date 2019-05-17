@@ -41,10 +41,10 @@
 ;;             (interactive)
 ;;             (local-set-key "\C-c\C-c" 'my-compile-c)))
 
-(global-set-key "\C-x\C-c"
-                (lambda ()
-                  (interactive)
-                  (message "Sorry, I can't quit that way")))
+;;(global-set-key "\C-x\C-c"
+;;                (lambda ()
+;;                  (interactive)
+;;                  (message "Sorry, I can't quit that way")))
 
 ;; rename the current file and buffer
 (defun rename-bf (to)
@@ -70,11 +70,19 @@
   (term-char-mode)
   (end-of-buffer))
 
+(defun arnold-term-mode-save ()
+  (interactive)
+  (message "can't save a term mode"))
+
 (defun arnold-term-mode-hooks ()
+  (message "term mode starting up")
   (local-set-key "\C-c\C-k" 'arnold-term-char-mode))
 
-(add-hook 'term-mode-hook 'arnold-term-mode-hooks)
 
+(define-key term-raw-map (kbd "\C-x\C-s")
+  'arnold-term-mode-save)
+
+(add-hook 'term-mode-hook 'arnold-term-mode-hooks)
 
 (defun arnold-set-buffer-compile-command (command)
   (interactive "Fcommand ")
@@ -798,7 +806,6 @@ mentioned in an erc channel" t)
  '(":.*:.*compileTestJava\\(.*\\):\\(.*\\): error:.*"
    1 2))
 
-
 (arnold/add-compilation-error
  'gradle-first-error-test-javadoc
  '(":.*:.*androidJavadoc\\(.*\\):\\(.*\\): error:.*"
@@ -820,7 +827,20 @@ mentioned in an erc channel" t)
  '(":.*:mergeDebugResources\\(.*\\):\\(.*\\): .*error:.*"
    1 2))
 
+(arnold/add-compilation-error
+ 'buck-java
+ '("\\(.*\\):\\(.*\\): error:.*"
+   1 2))
 
+(arnold/add-compilation-error
+ 'buck-java
+ '("\\(stderr: \\)?\\(.*\\):\\(.*\\): error:.*"
+   2 3))
+
+(arnold/add-compilation-error
+ 'd-file
+ '("\\(stderr: \\)?\\(.*\\..\\):\\(.*\\):\\(.*\\) error:.*"
+   2 3))
 
 
 (setf yas-snippet-dirs

@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: java
+# key: java
+# expand-env: ((package-name (file-name-base (directory-file-name (file-name-directory (buffer-file-name))))))
+# --
+java_library(
+    name = "`package-name`",
+    srcs = glob(["*.java"]),
+    visibility = [
+        "PUBLIC",
+    ],
+)

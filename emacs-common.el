@@ -27,6 +27,7 @@
 (require 'cl)
 (require 'compile)
 (require 'yasnippet)
+(require 'term)
 
 (add-to-list 'load-path (file-name-directory load-file-name))
 
@@ -75,12 +76,10 @@
   (message "can't save a term mode"))
 
 (defun arnold-term-mode-hooks ()
-  (message "term mode starting up")
-  (local-set-key "\C-c\C-k" 'arnold-term-char-mode))
+  (message "term mode starting up"))
 
-
-(define-key term-raw-map (kbd "\C-x\C-s")
-  'arnold-term-mode-save)
+;;  (define-key term-raw-map (kbd "C-x C-s")
+;;    'arnold-term-mode-save)
 
 (add-hook 'term-mode-hook 'arnold-term-mode-hooks)
 

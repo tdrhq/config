@@ -876,3 +876,8 @@ mentioned in an erc channel" t)
     (compile (compilation-read-command (format "buck test %s -f %s"
                                                target
                                                (file-name-base (buffer-file-name)))))))
+(defun copy-buffer-file-name ()
+  (interactive)
+  (let ((filename (buffer-file-name)))
+    (when filename
+      (kill-new filename))))

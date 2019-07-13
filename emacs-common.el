@@ -880,3 +880,19 @@ mentioned in an erc channel" t)
   (let ((filename (buffer-file-name)))
     (when filename
       (kill-new filename))))
+
+(require 'paredit)
+(require 'rainbow-delimiters)
+
+(add-hook 'emacs-lisp-mode-hook       'enable-paredit-mode)
+(add-hook 'lisp-mode-hook             'enable-paredit-mode)
+(add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
+(add-hook 'scheme-mode-hook           'enable-paredit-mode)
+
+(defun enable-rainbow-delimiters-mode ()
+  (rainbow-delimiters-mode +1))
+
+(add-hook 'emacs-lisp-mode-hook       'enable-rainbow-delimiters-mode)
+(add-hook 'lisp-mode-hook             'enable-rainbow-delimiters-mode)
+(add-hook 'lisp-interaction-mode-hook 'enable-rainbow-delimiters-mode)
+(add-hook 'scheme-mode-hook           'enable-rainbow-delimiters-mode)

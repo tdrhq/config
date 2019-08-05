@@ -190,11 +190,13 @@
 
 (defun compile-finished-notification (buf status)
   (message "Status is %s" status)
-  (ignore-errors
+  (condition-case nil
       (notifications-notify :transient t :title
                             (if (string-match "finished" status)
                                 "Compilation done"
-                              "Compilation failed"))))
+                              "Compilation failed"))
+    ((debug dbus-error)
+     (message "sheet"))))
 
 
 ;;(defun compile-finished-notification (buf status))
@@ -285,7 +287,9 @@
   (save-excursion
     (arnold/find-constructor)
     (forward-sexp)
-    (forward-sexp) ;; now we're at '}'
+    (loop
+     until (eql ?\} (char-before (point)))
+     do (forward-sexp))
     (forward-char -1)
 
     (save-excursion

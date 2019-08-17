@@ -896,3 +896,10 @@ mentioned in an erc channel" t)
 (add-hook 'lisp-mode-hook             'enable-rainbow-delimiters-mode)
 (add-hook 'lisp-interaction-mode-hook 'enable-rainbow-delimiters-mode)
 (add-hook 'scheme-mode-hook           'enable-rainbow-delimiters-mode)
+
+
+(defun insert-relative-file-name ()
+  (interactive)
+  (let ((file (ido-read-file-name "Select file: ")))
+    (let ((file (file-relative-name  file (file-name-directory (buffer-file-name)))))
+     (insert file))))

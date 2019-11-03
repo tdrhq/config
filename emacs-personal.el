@@ -159,11 +159,12 @@
 (global-set-key "\C-cc" 'compile)
 
     ;; Draw tabs with the same color as trailing whitespace
-    (add-hook 'font-lock-mode-hook
-              (lambda ()
-                (font-lock-add-keywords
-                  nil
-                  '(("\t" 0 'trailing-whitespace prepend)))))
+    ;; (add-hook 'font-lock-mode-hook
+    ;;           (lambda ()
+    ;;             (font-lock-add-keywords
+    ;;               nil
+;;               '(("\t" 0 'trailing-whitespace prepend)))))
+
 
 (setq compilation-scroll-output 'first-error)
 

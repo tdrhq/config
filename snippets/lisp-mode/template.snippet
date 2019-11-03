@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: template
+# key: template
+# --
+(in-package :${1:`(file-name-nondirectory (directory-file-name (file-name-directory (buffer-file-name))))`})
+
+(markup:enable-reader)
+
+$0

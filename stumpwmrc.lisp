@@ -301,3 +301,6 @@
 
 (defcommand swank () ()
   (load-swank))
+
+(defcommand kill-all-urxvt () ()
+  (mapc 'stumpwm:kill-window (my-terminals)))

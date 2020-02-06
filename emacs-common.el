@@ -861,9 +861,9 @@ mentioned in an erc channel" t)
 
 (setq whitespace-line-column  100)
 
-(defun start-emulator ()
+(cl-defun start-emulator (&optional (no-window t) ())
   (interactive)
-  (shell-command "cd ~/ && ./scripts/start_emulator -no-window &" "*emulator*"))
+  (shell-command (format "cd ~/ && ./scripts/start_emulator %s &" (if no-window "-no-window" "")) "*emulator*"))
 
 (defun buck/get-target (file)
   (let ((root (workspace-root (ede-current-project))))

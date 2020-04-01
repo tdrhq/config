@@ -10,7 +10,6 @@
  '(column-number-mode t)
  '(current-language-environment "Latin-1")
  '(default-input-method "latin-1-prefix")
- '(display-battery-mode t)
  '(global-font-lock-mode t nil (font-lock))
  '(ido-enable-flex-matching t)
  '(ruby-deep-arglist nil)

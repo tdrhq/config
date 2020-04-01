@@ -796,54 +796,58 @@ mentioned in an erc channel" t)
 
 (arnold/add-compilation-error
  'gradle-first-error-test
- '(":.*:.*WithJavac\\(.*\\):\\(.*\\): error:.*"
+ '("^XXXX:.*:.*WithJavac\\(.*\\):\\(.*\\): error:.*"
    1 2))
 
 (arnold/add-compilation-error
  'plain-java-first-error-test
- '(":.*:.*compileJava\\(.*\\):\\(.*\\): error:.*"
+ '("^XXXX:.*:.*compileJava\\(.*\\):\\(.*\\): error:.*"
    1 2))
 
 (arnold/add-compilation-error
  'plain-java-first-error-test-test
- '(":.*:.*compileTestJava\\(.*\\):\\(.*\\): error:.*"
+ '("^XXXX:.*:.*compileTestJava\\(.*\\):\\(.*\\): error:.*"
    1 2))
 
 (arnold/add-compilation-error
  'gradle-first-error-test-javadoc
- '(":.*:.*androidJavadoc\\(.*\\):\\(.*\\): error:.*"
+ '("^XXXX:.*:.*androidJavadoc\\(.*\\):\\(.*\\): error:.*"
    1 2))
 
 (arnold/add-compilation-error
  'gradle-first-error-test-for-kotlin
- '(":.*:.*Kotline: \\(.*.kt\\): (\\(.*\\), .*):.*"
+ '("^XXXX:.*:.*Kotline: \\(.*.kt\\): (\\(.*\\), .*):.*"
    1 2))
 
 (arnold/add-compilation-error
  'gradle-kotlin-regular-error
- '("e: \\(.*.kt\\): (\\(.*\\), .*):.*"
+ '("^e: \\(.*.kt\\): (\\(.*\\), .*):.*"
    1 2))
 
 
 (arnold/add-compilation-error
  'gradle-first-error-xml
- '(":.*:mergeDebugResources\\(.*\\):\\(.*\\): .*error:.*"
+ '("^XXXX:.*:mergeDebugResources\\(.*\\):\\(.*\\): .*error:.*"
    1 2))
 
 (arnold/add-compilation-error
  'buck-java
- '("\\(.*\\):\\(.*\\): error:.*"
+ '("^\\(.*\\):\\(.*\\): error:.*"
    1 2))
 
 (arnold/add-compilation-error
  'buck-java
- '("\\(stderr: \\)?\\(.*\\):\\(.*\\): error:.*"
+ '("^\\(stderr: \\)?\\(.*\\):\\(.*\\): error:.*"
    2 3))
 
 (arnold/add-compilation-error
  'd-file
- '("\\(stderr: \\)?\\(.*\\..\\):\\(.*\\):\\(.*\\) error:.*"
+ '("^\\(stderr: \\)?\\(.*\\..\\):\\(.*\\):\\(.*\\) error:.*"
    2 3))
+
+(arnold/add-compilation-error
+ 'lispworks-because-of-error
+ '("^Backtrace \\[because of error:.*"))
 
 
 (setf yas-snippet-dirs

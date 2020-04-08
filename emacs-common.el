@@ -911,3 +911,19 @@ mentioned in an erc channel" t)
   (let ((file (ido-read-file-name "Select file: ")))
     (let ((file (file-relative-name  file (file-name-directory (buffer-file-name)))))
      (insert file))))
+
+
+
+(defun add-to-asd ()
+  (interactive)
+  (save-window-excursion
+    (let ((filename (buffer-file-name)))
+     (let ((file (ido-read-file-name "Select file: ")))
+       (find-file file)
+       (save-excursion
+         (goto-char 0)
+         (re-search-forward ":components (")
+         (forward-sexp)
+         (insert "\n")
+         (insert (format "(:file \"%s\")" (file-name-base filename)))
+         (indent-region (point) (point)))))))

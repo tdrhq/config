@@ -905,6 +905,13 @@ mentioned in an erc channel" t)
 (add-hook 'lisp-interaction-mode-hook 'enable-rainbow-delimiters-mode)
 (add-hook 'scheme-mode-hook           'enable-rainbow-delimiters-mode)
 
+(defun remove-slime-mode-from-asd-file ()
+  (interactive)
+  (when (equal "asd" (file-name-extension (buffer-file-name)))
+    (message "removing slime-mode")
+    (slime-mode -1)))
+
+(add-hook 'lisp-mode-hook 'remove-slime-mode-from-asd-file 100)
 
 (defun insert-relative-file-name ()
   (interactive)

@@ -232,6 +232,11 @@
 (defcommand move-next-browser () ()
   (%next-browser))
 
+(setf *screen-mode-line-format*
+      "[^B%n^b] %d %W" )
+
+(setf *time-modeline-string*
+      "%a %b %e %k:%M")
 
 (defun find-next-editor ()
   (let* ((matches (editors))

@@ -2,6 +2,8 @@
 (in-package :stumpwm)
 (set-prefix-key (kbd "C-u"))
 
+(ql:quickload "str")
+
 ;; xlock
 (stumpwm:define-key stumpwm:*top-map* (stumpwm:kbd "C-M-l") "run-shell-command xlock")
 (define-key *top-map* (kbd "C-M-o") "run-shell-command fetchotp -x --username Google\\ Internal\\ 2Factor")
@@ -121,8 +123,9 @@
 (set-firefox-default)
 
 (defcommand google-chrome () ()
-	    "Load google chrome"
-	    (run-or-raise (car *c-b-browser*) (list :class (cdr *c-b-browser*))))
+  "Load google chrome"
+  (unless (%next-browser)
+    (run-or-raise (car *c-b-browser*) (list :class (cdr *c-b-browser*)))))
 
 (defcommand emacs-urxvt () ()
 	    "Load emacs"
@@ -187,7 +190,6 @@
 (defun my-terminals ()
   (remove-if-not (lambda (x) (equal (stumpwm::window-class x) "URxvt")) (stumpwm::screen-windows (stumpwm:current-screen))))
 
-
 (defcommand move-next-urxvt () ()
   (run-or-raise "urxvt" '(:class "URxvt")))
 
@@ -209,6 +211,27 @@
 (message "just before editors")
 (defun editors ()
   (remove-if-not (lambda (x) (window-is-editor x)) (screen-windows (current-screen))))
+
+(defun all-browsers ()
+  (loop for w in (sort (screen-windows (current-screen)) #'< :key 'window-number)
+     if (let ((class (string-downcase (window-class w))))
+          (or (str:containsp "firefox" class)
+              (str:containsp "google-chrome" class)))
+     collect
+     w))
+
+(defun %next-browser ()
+  (let* ((windows (all-browsers))
+         (cur-pos (position (current-window) windows)))
+    (when windows
+      (unless cur-pos
+        (pull-window (car windows)))
+      (pull-window (elt windows (mod (+ cur-pos 1) (length windows))))
+      t)))
+
+(defcommand move-next-browser () ()
+  (%next-browser))
+
 
 (defun find-next-editor ()
   (let* ((matches (editors))

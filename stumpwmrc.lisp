@@ -224,9 +224,9 @@
   (let* ((windows (all-browsers))
          (cur-pos (position (current-window) windows)))
     (when windows
-      (unless cur-pos
-        (pull-window (car windows)))
-      (pull-window (elt windows (mod (+ cur-pos 1) (length windows))))
+      (if (not cur-pos)
+        (pull-window (car windows))
+        (pull-window (elt windows (mod (+ cur-pos 1) (length windows)))))
       t)))
 
 (defcommand move-next-browser () ()

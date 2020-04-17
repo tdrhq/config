@@ -933,6 +933,7 @@ mentioned in an erc channel" t)
                                       (file-name-directory filename)
                                       default-asd)))
         (save-excursion
+          (find-file file)
           (goto-char 0)
           (re-search-forward ":components ")
           (forward-sexp)

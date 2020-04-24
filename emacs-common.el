@@ -920,15 +920,17 @@ mentioned in an erc channel" t)
      (insert file))))
 
 
+(defun guess-asd (filename test-p)
+  (loop for name in (directory-files (file-name-directory filename))
+        if (string-suffix-p (if test-p ".tests.asd" ".asd") name)
+        return name))
 
 (defun add-to-asd ()
   (interactive)
   (save-window-excursion
     (let* ((filename (buffer-file-name))
            (test-p (string-prefix-p "test-" (file-name-base filename)))
-           (default-asd (loop for name in (directory-files (file-name-directory filename))
-                                            if (string-suffix-p (if test-p ".tests.asd" ".asd") name)
-                                            return name)))
+           (default-asd (guess-asd filename test-p)))
       (let ((file (ido-read-file-name "Select file: "
                                       (file-name-directory filename)
                                       default-asd)))
@@ -942,3 +944,12 @@ mentioned in an erc channel" t)
           (insert (format "(:file \"%s\")" (file-name-base filename)))
           (indent-region (point) (point))
           (save-buffer))))))
+
+(defun guess-lisp-package ()
+  (let  ((package-file (format "%s/package.lisp" (file-name-directory (buffer-file-name)))))
+    (save-window-excursion
+      (find-file package-file)
+      (save-excursion
+        (goto-char 0)
+        (re-search-forward "defpackage :")
+        (thing-at-point 'sexp)))))

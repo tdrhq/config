@@ -21,8 +21,12 @@
 (defmacro deftoggle (function-sym command kill-command)
   `(let (toggle-state)
     (defun ,function-sym ()
-       (toggle-command toggle-state ,command ,kill-command))))
+      (toggle-command toggle-state ,command ,kill-command))))
 
+(defvar *focus-mode* nil)
+
+(defcommand focus-mode () ()
+  (setf *focus-mode* (not *focus-mode*)))
 
 (deftoggle toggle-trayer "/usr/bin/trayer --SetDockType false" "killall trayer")
 (deftoggle toggle-xclock "xclock" "killall xclock")
@@ -124,8 +128,10 @@
 
 (defcommand google-chrome () ()
   "Load google chrome"
-  (unless (%next-browser)
-    (run-or-raise (car *c-b-browser*) (list :class (cdr *c-b-browser*)))))
+  (if *focus-mode*
+      (message "FOCUS!")
+      (unless (%next-browser)
+        (run-or-raise (car *c-b-browser*) (list :class (cdr *c-b-browser*))))))
 
 (defcommand emacs-urxvt () ()
 	    "Load emacs"

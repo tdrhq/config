@@ -913,6 +913,9 @@ mentioned in an erc channel" t)
 
 (add-hook 'lisp-mode-hook 'remove-slime-mode-from-asd-file 100)
 
+(add-to-list 'package-archives
+             '("melpa" . "https://melpa.org/packages/") t)
+
 (defun insert-relative-file-name ()
   (interactive)
   (let ((file (ido-read-file-name "Select file: ")))
@@ -953,3 +956,14 @@ mentioned in an erc channel" t)
         (goto-char 0)
         (re-search-forward "defpackage :")
         (thing-at-point 'sexp)))))
+
+
+(defun restart-slime ()
+  (interactive)
+  (kill-buffer "*inferior-lisp*")
+  (slime)
+  (run-at-time "4 sec" nil
+               (lambda ()
+                 (message "going to run slime-eval")
+                 (slime-eval '(CL-USER::SETUP-FOR-WEB))
+                 (message "ran slime eval"))))

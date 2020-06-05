@@ -1,0 +1,3 @@
+[submodule "polymode"]
+	path = polymode
+	url = git@github.com:polymode/polymode.git

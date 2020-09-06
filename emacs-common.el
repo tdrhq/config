@@ -955,6 +955,13 @@ mentioned in an erc channel" t)
       (find-file package-file)
       (guess-lisp-package-in-buffer))))
 
+(defun guess-lisp-package-in-buffer ()
+  (save-excursion
+    (goto-char 0)
+    (if (re-search-forward "defpackage :" nil t)
+        (thing-at-point 'sexp)
+      "no-package")))
+
 
 (defun restart-slime ()
   (interactive)

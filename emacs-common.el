@@ -907,7 +907,8 @@ mentioned in an erc channel" t)
 
 (defun remove-slime-mode-from-asd-file ()
   (interactive)
-  (when (equal "asd" (file-name-extension (buffer-file-name)))
+  (when (and (buffer-file-name)
+             (equal "asd" (file-name-extension (buffer-file-name))))
     (message "removing slime-mode")
     (slime-mode -1)))
 
@@ -952,10 +953,7 @@ mentioned in an erc channel" t)
   (let  ((package-file (format "%s/package.lisp" (file-name-directory (buffer-file-name)))))
     (save-window-excursion
       (find-file package-file)
-      (save-excursion
-        (goto-char 0)
-        (re-search-forward "defpackage :")
-        (thing-at-point 'sexp)))))
+      (guess-lisp-package-in-buffer))))
 
 
 (defun restart-slime ()

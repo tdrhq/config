@@ -1,4 +1,5 @@
 export PATH=~/.local/bin:$PATH
+export GDK_CORE_DEVICE_EVENTS=1
 gnome-settings-daemon &
 nm-applet --sm-disable &
 

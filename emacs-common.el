@@ -972,3 +972,7 @@ mentioned in an erc channel" t)
                  (message "going to run slime-eval")
                  (slime-eval '(CL-USER::SETUP-FOR-WEB))
                  (message "ran slime eval"))))
+
+
+(load "~/builds/web/src/pkg/cl-pkg.el")
+(setf slime-find-buffer-package-function 'cl-pkg-search-buffer-package)

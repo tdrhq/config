@@ -1002,6 +1002,8 @@ mentioned in an erc channel" t)
                                                packages)))
              (save-excursion
                (beginning-of-sexp)
+               (when (eql ?\' (char-after))
+                 (forward-char))
                (insert package)
                (insert "::"))
              (sly-import-symbol-at-point)))))))))

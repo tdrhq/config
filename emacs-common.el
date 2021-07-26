@@ -975,3 +975,15 @@ mentioned in an erc channel" t)
 
 
 (load "~/builds/web/src/pkg/cl-pkg.el")
+
+(defun arnold--lisp-toggle-test ()
+  (interactive)
+  (let* ((dir (file-name-directory (buffer-file-name)))
+         (name (file-name-nondirectory (buffer-file-name)))
+         (dest (if (string-prefix-p "test-" name)
+                   (replace-regexp-in-string "^test-" "" name)
+                 (format "test-%s" name))))
+    (find-file dest)))
+
+(define-key lisp-mode-map (kbd "C-c t")
+  'arnold--lisp-toggle-test)

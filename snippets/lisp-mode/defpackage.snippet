@@ -3,8 +3,7 @@
 # key: defpackage
 # --
 (pkg:define-package :$1
-  (:use :cl
-        :alexandria
-        `(if (string-prefix-p "test-" (file-name-nondirectory (buffer-file-name))) "\n:fiveam" "")`$0))
+  (:use #:cl
+        #:alexandria))
 
 $0

@@ -975,4 +975,3 @@ mentioned in an erc channel" t)
 
 
 (load "~/builds/web/src/pkg/cl-pkg.el")
-(setf slime-find-buffer-package-function 'cl-pkg-search-buffer-package)

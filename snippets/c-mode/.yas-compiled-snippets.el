@@ -5,4 +5,4 @@
                      '(("ng" "native/gmp/" "ng" nil nil nil "/home/arnold/config/snippets/c-mode/ng.snippet" nil nil)))
 
 
-;;; Do not edit! File generated at Sat Sep  5 17:45:59 2020
+;;; Do not edit! File generated at Fri Jul 23 10:06:43 2021

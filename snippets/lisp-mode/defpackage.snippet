@@ -1,9 +1,11 @@
 # -*- mode: snippet -*-
 # name: defpackage
 # key: defpackage
+# expand-env: ((test-p (string-prefix-p "test-" (file-name-nondirectory (buffer-file-name)))))
 # --
-(pkg:define-package :$1
-  (:use #:cl
+(pkg:define-package :${1:`(replace-regexp-in-string ".lisp$" "" (replace-regexp-in-string "^.*/src/" "" (buffer-file-name)))`}
+  (:use #:cl`(if test-p "\n#:fiveam")`
         #:alexandria))
+`(if test-p "\n\n(util/fiveam:def-suite)")`
 
 $0

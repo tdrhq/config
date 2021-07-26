@@ -987,3 +987,24 @@ mentioned in an erc channel" t)
 
 (define-key lisp-mode-map (kbd "C-c t")
   'arnold--lisp-toggle-test)
+
+(defun arnold--sly-import-symbol-at-point ()
+  (interactive)
+  (let ((exp (thing-at-point 'sexp)))
+    (cond
+     ((string-search ":" exp)
+      (sly-import-symbol-at-point))
+     (t
+      (sly-eval-async `(cl:mapcar 'cl:package-name (cl:list-all-packages))
+        (lambda (packages)
+         (let ((packages (mapcar 'downcase packages)))
+           (let ((package (ido-completing-read "Choose package to import from: "
+                                               packages)))
+             (save-excursion
+               (beginning-of-sexp)
+               (insert package)
+               (insert "::"))
+             (sly-import-symbol-at-point)))))))))
+
+(define-key sly-mode-map (kbd "C-c i")
+  'arnold--sly-import-symbol-at-point)

@@ -1010,3 +1010,7 @@ mentioned in an erc channel" t)
 
 (define-key sly-mode-map (kbd "C-c i")
   'arnold--sly-import-symbol-at-point)
+
+(setq ido-ignore-extensions t)
+
+(push ".64ufasl" completion-ignored-extensions)

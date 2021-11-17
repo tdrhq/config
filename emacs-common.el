@@ -29,7 +29,8 @@
 (require 'yasnippet)
 (require 'term)
 
-(add-to-list 'load-path (file-name-directory load-file-name))
+(when load-file-name
+  (add-to-list 'load-path (file-name-directory load-file-name)))
 
 (ido-mode t)
 (setq ido-enable-flex-matching t)
@@ -867,7 +868,7 @@ mentioned in an erc channel" t)
 
 (cl-defun start-emulator (&optional (no-window t) ())
   (interactive)
-  (shell-command (format "cd ~/ && ./scripts/start_emulator %s &" (if no-window "-no-window" "")) "*emulator*"))
+  (shell-command (format "cd ~/ && ./builds/jipr/scripts/start-emulator %s &" (if no-window "-no-window" "")) "*emulator*"))
 
 (defun buck/get-target (file)
   (let ((root (workspace-root (ede-current-project))))
@@ -907,10 +908,12 @@ mentioned in an erc channel" t)
 
 (defun remove-slime-mode-from-asd-file ()
   (interactive)
-  (when (and (buffer-file-name)
-             (equal "asd" (file-name-extension (buffer-file-name))))
-    (message "removing slime-mode")
-    (slime-mode -1)))
+
+  ;; (when (and (buffer-file-name)
+  ;;            (equal "asd" (file-name-extension (buffer-file-name))))
+  ;;   (message "removing slime-mode")
+  ;;   (slime-mode -1))
+  )
 
 (add-hook 'lisp-mode-hook 'remove-slime-mode-from-asd-file 100)
 
@@ -990,14 +993,18 @@ mentioned in an erc channel" t)
 
 (defun arnold--sly-import-symbol-at-point ()
   (interactive)
-  (let ((exp (thing-at-point 'sexp)))
+  (let ((exp (thing-at-point 'sexp))
+        (package (sly-current-package)))
+    (message "using package %s" package)
     (cond
      ((string-search ":" exp)
       (sly-import-symbol-at-point))
      (t
-      (sly-eval-async `(cl:mapcar 'cl:package-name (cl:list-all-packages))
+      (sly-eval-async `(util/emacs:list-packages-for-symbol ,exp ,package)
         (lambda (packages)
-         (let ((packages (mapcar 'downcase packages)))
+          (let ((packages (remove-if (lambda (x)
+                                       (cl-search "/test-" x))
+                                     (mapcar 'downcase packages))))
            (let ((package (ido-completing-read "Choose package to import from: "
                                                packages)))
              (save-excursion

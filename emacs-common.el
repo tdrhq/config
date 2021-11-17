@@ -993,8 +993,11 @@ mentioned in an erc channel" t)
 
 (defun arnold--sly-import-symbol-at-point ()
   (interactive)
-  (let ((exp (thing-at-point 'sexp))
-        (package (sly-current-package)))
+  (let* ((exp (thing-at-point 'sexp))
+         (exp (if (string-prefix-p "<" exp)
+                  (substring exp 1)
+                exp))
+         (package (sly-current-package)))
     (message "using package %s" package)
     (cond
      ((string-search ":" exp)
@@ -1009,11 +1012,18 @@ mentioned in an erc channel" t)
                                                packages)))
              (save-excursion
                (beginning-of-sexp)
-               (when (eql ?\' (char-after))
+               (when (member
+                      (char-after)
+                      (list ?\' ?<))
                  (forward-char))
-               (insert package)
-               (insert "::"))
-             (sly-import-symbol-at-point)))))))))
+               ;; add an empty space if we need to distinguish it from ' or <
+               (save-excursion
+                 (insert " ")
+                 (insert package)
+                 (insert "::")
+                 (sly-import-symbol-at-point))
+               ;; delete the empty space we added earlier
+               (delete-char 1))))))))))
 
 (define-key sly-mode-map (kbd "C-c i")
   'arnold--sly-import-symbol-at-point)

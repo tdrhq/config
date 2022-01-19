@@ -7,6 +7,7 @@
                        ("script" "#!/usr/bin/env python\n\nfrom __future__ import absolute_import\nfrom __future__ import division\nfrom __future__ import print_function\nfrom __future__ import unicode_literals\n\nimport sys, scribe_logger\n\n$0\n\ndef main(argv):\n    sys.exit(argv)\n\n\nif __name__ == '__main__':\n    with scribe_logger.ErrorHandler():\n        sys.exit(main(sys.argv))\n" "script" nil nil
                         ((yas-indent-line 'fixed))
                         "/home/arnold/config/snippets/python-mode/script.snippet" nil nil)
+                       ("lisp" "load(\"//tools:lisp.bzl\", \"lisp_library\", \"lisp_test\")\n\nlisp_library(\n    name = \"$0\",\n    srcs = [\n    ],\n    deps = [\n    ],\n)\n" "lisp" nil nil nil "/home/arnold/config/snippets/python-mode/lisp.snippet" nil nil)
                        ("java" "java_library(\n    name = \"`package-name`\",\n    srcs = glob([\"*.java\"]),\n    visibility = [\n        \"PUBLIC\",\n    ],\n)" "java" nil nil
                         ((package-name
                           (file-name-base
@@ -40,4 +41,4 @@
                        ("*Backtrace*" "" "*Backtrace*" nil nil nil "/home/arnold/config/snippets/python-mode/*Backtrace*" nil nil)))
 
 
-;;; Do not edit! File generated at Sun Nov 14 10:35:13 2021
+;;; Do not edit! File generated at Fri Jan 14 16:24:06 2022

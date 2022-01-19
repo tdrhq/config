@@ -17,4 +17,4 @@
                        ("clos" "($1 :accessor $1\n    :initarg :$1\n    :initform nil)" "clos-field" nil nil nil "/home/arnold/config/snippets/lisp-mode/clos-field.snippet" nil nil)))
 
 
-;;; Do not edit! File generated at Sun Nov 14 10:35:13 2021
+;;; Do not edit! File generated at Fri Jan 14 16:24:05 2022

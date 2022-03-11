@@ -1019,10 +1019,10 @@ mentioned in an erc channel" t)
                (save-excursion
                  (insert " ")
                  (insert package)
-                 (insert "::")
-                 (sly-import-symbol-at-point))
+                 (insert "::"))
                ;; delete the empty space we added earlier
-               (delete-char 1))))))))))
+               (delete-char 1))
+             (sly-import-symbol-at-point)))))))))
 
 (define-key sly-mode-map (kbd "C-c i")
   'arnold--sly-import-symbol-at-point)

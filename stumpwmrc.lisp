@@ -321,13 +321,12 @@
 
 (message "the end")
 
-(ql:quickload "swank")
-(message "after swank-loader")
 (defun load-swank ()
   (load-swank-step-2))
 
 (defun load-swank-step-2 ()
-  (swank:create-server :port 5005
+   (ql:quickload "slynk")  
+   (uiop:call-function "slynk:create-server" :port 5005
                        :dont-close t)
   (echo-string (current-screen)
                "Starting swank. M-x slime-connect RET RET, then (in-package stumpwm)."))

@@ -1010,11 +1010,13 @@ mentioned in an erc channel" t)
            (let ((package (ido-completing-read "Choose package to import from: "
                                                packages)))
              (save-excursion
-               (beginning-of-sexp)
-               (when (member
-                      (char-after)
-                      (list ?\' ?<))
-                 (forward-char))
+               (beginning-of-thing 'sexp)
+               ;; (beginning-of-sexp) misbehaves if it's the first letter of word
+               (cl-loop while (member
+                              (char-after)
+                              (list ?\' ?< ?#))
+                        do
+                        (forward-char))
                ;; add an empty space if we need to distinguish it from ' or <
                (save-excursion
                  (insert " ")

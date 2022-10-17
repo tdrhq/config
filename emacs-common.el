@@ -989,14 +989,23 @@ mentioned in an erc channel" t)
     (find-file dest)))
 
 (define-key lisp-mode-map (kbd "C-c t")
-  'arnold--lisp-toggle-test)
+            'arnold--lisp-toggle-test)
+
+(defun arnold--symbol-at-point ()
+  (let* ((exp (thing-at-point 'sexp)))
+    (when (or
+           (string-prefix-p "<" exp)
+           (string-prefix-p "'" exp))
+      (setf exp (substring exp 1 nil)))
+    (when (or
+           (string-suffix-p ">" exp))
+      (setf exp (substring exp 0 -1)))
+    exp))
 
 (defun arnold--sly-import-symbol-at-point ()
   (interactive)
-  (let* ((exp (thing-at-point 'sexp))
-         (exp (car (last (split-string exp "<"))))
-         (exp (car (last (split-string exp "'"))))
-         (package (sly-current-package)))
+  (lexical-let ((exp (arnold--symbol-at-point))
+                (package (sly-current-package)))
     (message "using package %s for expression %s" package exp)
     (cond
      ((string-search ":" exp)
@@ -1010,21 +1019,10 @@ mentioned in an erc channel" t)
            (let ((package (ido-completing-read "Choose package to import from: "
                                                packages)))
              (save-excursion
-               (beginning-of-thing 'sexp)
-               ;; (beginning-of-sexp) misbehaves if it's the first letter of word
-               (cl-loop while (member
-                              (char-after)
-                              (list ?\' ?< ?#))
-                        do
-                        (forward-char))
-               ;; add an empty space if we need to distinguish it from ' or <
-               (save-excursion
-                 (insert " ")
-                 (insert package)
-                 (insert "::"))
-               ;; delete the empty space we added earlier
-               (delete-char 1))
-             (sly-import-symbol-at-point)))))))))
+               (sly-package-fu--add-or-update-import-from-form
+                (message "%s::%s"
+                         package
+                         exp)))))))))))
 
 (define-key sly-mode-map (kbd "C-c i")
   'arnold--sly-import-symbol-at-point)

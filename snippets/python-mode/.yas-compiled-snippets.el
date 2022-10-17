@@ -41,4 +41,4 @@
                        ("*Backtrace*" "" "*Backtrace*" nil nil nil "/home/arnold/config/snippets/python-mode/*Backtrace*" nil nil)))
 
 
-;;; Do not edit! File generated at Fri Jan 14 16:24:06 2022
+;;; Do not edit! File generated at Tue May 10 16:58:18 2022

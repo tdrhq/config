@@ -206,8 +206,8 @@
           'compile-finished-notification)
 
 ;; remove trailing whitespace always
-(add-hook 'before-save-hook
-          'delete-trailing-whitespace)
+(remove-hook 'before-save-hook
+             'delete-trailing-whitespace)
 
 (require 'uniquify)
 

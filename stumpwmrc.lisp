@@ -1,5 +1,7 @@
-
 (in-package :stumpwm)
+
+(ql:quickload :log4cl)
+
 (set-prefix-key (kbd "C-u"))
 
 (ql:quickload "str")
@@ -115,7 +117,7 @@
 ;; xrandr -q | grep "VGA-0 connected" ||bterm
 ;;  xrandr --output VGA-0 --off &
 
-(setf *c-b-browser* (cons "conkeror" "Conkeror"))
+(defparameter *c-b-browser* (cons "conkeror" "Conkeror"))
 
 (defcommand set-firefox-default () ()
             (setf *c-b-browser* (cons "firefox" "Firefox")))
@@ -126,22 +128,28 @@
 
 (set-firefox-default)
 
+(defun safe-run-or-raise (&rest args)
+  (log:info "hello world~%")
+  (let ((res (apply #'run-or-raise args)))
+    (log:info "Got res: ~a" res)))
+
 (defcommand google-chrome () ()
   "Load google chrome"
+  (log:info "Running google-chrome")
   (if *focus-mode*
       (message "FOCUS!")
       (unless (%next-browser)
-        (run-or-raise (car *c-b-browser*) (list :class (cdr *c-b-browser*))))))
+        (safe-run-or-raise (car *c-b-browser*) (list :class (cdr *c-b-browser*))))))
 
 (defcommand emacs-urxvt () ()
-	    "Load emacs"
-	    (run-or-raise "emacsclient -c" '(:title "Emacsclient")))
+  "Load emacs"
+  (safe-run-or-raise "emacsclient -c" '(:title "Emacsclient")))
 
 (define-key *root-map* (kbd "C-b") "google-chrome")
 
 (defcommand xchat () ()
   "jump to xchat"
-  (run-or-raise "xchat" (list :class "Xchat")))
+  (run-or-raise "slack" (list :class "slack")))
 
 (define-key *root-map* (kbd "C-x") "xchat")
 
@@ -160,7 +168,6 @@
   (with-open-stream
    (p (sb-ext:process-output (sb-ext:run-program cmd () :output :stream :wait t :search t :environment env)))
    (apply #'concatenate 'string (read-lines p))))
-
 
 
 (run-and-get-output "date")
@@ -224,15 +231,24 @@
           (or (str:containsp "firefox" class)
               (str:containsp "google-chrome" class)))
      collect
-     w))
+        w))
+
+(defun %raise-and-focus (window)
+  "Raise the window to the top of the frame, and switch focus to that frame."
+  (raise-window window)
+  (focus-all window))
 
 (defun %next-browser ()
   (let* ((windows (all-browsers))
          (cur-pos (position (current-window) windows)))
     (when windows
-      (if (not cur-pos)
-        (pull-window (car windows))
-        (pull-window (elt windows (mod (+ cur-pos 1) (length windows)))))
+      (cond
+        (cur-pos ;; current window is a browser
+         (log:info "Switching to next browser window")
+         (%raise-and-focus (elt windows (mod (+ cur-pos 1) (length windows)))))
+        (t
+         (log:info "Raising first browser window")
+         (%raise-and-focus (car windows))))
       t)))
 
 (defcommand move-next-browser () ()
@@ -255,7 +271,7 @@
 
 (defun move-to-next-editor ()
   (if (find-next-editor)
-      (pull-window (find-next-editor))))
+      (%raise-and-focus (find-next-editor))))
 
 (message "just before move-to-editor")
 
@@ -265,7 +281,7 @@
   emacs window"
   (if (editors)
       (move-to-next-editor)
-    (run-or-raise "emacsclient -c" '(:class "Emacs"))))
+    (safe-run-or-raise "emacsclient -c" '(:class "Emacs"))))
 
 (defcommand move-to-monitor () ()
   (run-or-raise "monitor" '(:class "Monitor")))
@@ -332,8 +348,9 @@
                "Starting swank. M-x slime-connect RET RET, then (in-package stumpwm)."))
 
 
-(defcommand swank () ()
+(defcommand slynk () ()
   (load-swank))
 
 (defcommand kill-all-urxvt () ()
   (mapc 'stumpwm:kill-window (my-terminals)))
+

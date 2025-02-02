@@ -220,7 +220,7 @@
 (defun json-format ()
   (interactive)
   (save-excursion
-    (shell-command-on-region (mark) (point) "python -m json.tool" (buffer-name) t)))
+    (shell-command-on-region (mark) (point) "python3 -m json.tool" (buffer-name) t)))
 
 (require 'stripes)
 
@@ -545,7 +545,7 @@ mentioned in an erc channel" t)
              (modify-syntax-entry ?@ "< b"
                                   java-mode-syntax-table)))
 
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
+(remove-hook 'before-save-hook 'delete-trailing-whitespace)
 
 (defun revert-all-buffers (&optional even-modified)
   "Refreshes all open buffers from their respective files."
@@ -992,7 +992,8 @@ mentioned in an erc channel" t)
             'arnold--lisp-toggle-test)
 
 (defun arnold--symbol-at-point ()
-  (let* ((exp (thing-at-point 'sexp)))
+  (interactive)
+  (let* ((exp (thing-at-point 'symbol)))
     (when (or
            (string-prefix-p "<" exp)
            (string-prefix-p "'" exp))

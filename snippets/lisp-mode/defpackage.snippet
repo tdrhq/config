@@ -6,6 +6,6 @@
 (defpackage :${1:`(replace-regexp-in-string ".lisp$" "" (replace-regexp-in-string "^.*/\\(src\\|lisp\\)/" "" (buffer-file-name)))`}
   (:use #:cl`(if test-p "\n#:fiveam")`))
 (in-package :$1)
-`(if test-p "\n\n(util/fiveam:def-suite)")`
+`(if test-p "\n(util/fiveam:def-suite)")`
 
 $0
